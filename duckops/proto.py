@@ -1,31 +1,69 @@
 from __future__ import annotations
 
-from abc import ABC
 from plum import dispatch
 from typing import Union
 
 # concrete data ---
-import pandas as pd
-import polars as pl
 from siuba.siu import Symbolic, Call
 
 # guts ---
 from duckops._types import Interval
 from duckops._core import _query_call, DuckdbColumn
-from duckops import str as str_
-from duckops import dt
+from duckops.prototypes import (
+    IsLiteral,
+    IsConcrete,
+    IsConcretePandas,
+    IsConcretePolars,
+    IsSymbol,
+    LiteralLike,
+    ConcreteLike,
+    SymbolLike
+)
 from sqlalchemy import sql
+
+from typing import TYPE_CHECKING
 
 # Unions ----
 # Date, Timestamp, Time, Timestamp with Timezone
 # But also, what is Time?
 DatetimeLike = Union[Interval]
+StringLike = Union[str]
+NumberLike = Union[int, float]
 
 
 # Pre-processing steps ----
 #   * process all LiteralLike to go into SQL
 #   * ConcreteLike dispatch: separate literals and concretes
 #   * Handle homogeneous tuples as LiteralLike list
+
+def create_generic(_f):
+    if TYPE_CHECKING:
+        return _f
+
+    func_name = _f.__name__
+
+    @dispatch
+    def f(*args, **kwargs):
+        return dispatch_on_trait(f, args, kwargs)
+
+    @f.dispatch
+    def _literal(codata: IsLiteral, *args):
+        return _query_call(codata, args, f)
+
+    @f.dispatch
+    def _concrete(codata: IsConcretePandas, *args):
+        return _query_call(codata, args, f)
+
+    @f.dispatch
+    def _symbol(codata: IsSymbol, *args):
+        return to_symbol(f, args)
+
+    @f.dispatch
+    def _duckdb_translate(codata: DuckdbColumn, *args):
+        return getattr(sql.func, func_name)(*args)
+
+    return f
+
 
 
 # Generic dispatch functions ----
@@ -38,7 +76,7 @@ def date_part(*args, **kwargs):
 @dispatch
 def date_part(codata: IsLiteral, part: LiteralLike, x: DatetimeLike):
     # TODO: conversions should happen somewhere else
-    return _query_call(IsLiteral(), [part, x], date_part)
+    return _query_call(codata, [part, x], date_part)
 
 
 @dispatch
@@ -96,7 +134,7 @@ def today(codata: IsLiteral):
 @dispatch
 def today(codata: IsSymbol, x: SymbolLike):
     # TODO: _ only used to invoke laziness
-    to_symbol(today, tuple())
+    return to_symbol(today, tuple())
 
 
 @dispatch
@@ -140,44 +178,7 @@ class assign_equals(FunctionElement):
 def _(element, compiler, **kw):
     lhs, rhs = element.clauses
     proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    clauz = compiler.process(element.clauses, **kw)
-    print(type(proc_lhs))
-    return f"%s := %s" % (proc_lhs, proc_rhs)
-
-
-# New Types ----
-
-class NamedArg:
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-
-# Traits ----
-
-class IsConcrete(ABC): ...
-class IsSymbol(ABC): ...
-class IsLiteral(ABC): ...
-
-
-class IsConcretePandas(IsConcrete): ...
-class IsConcretePolars(IsConcrete): ...
-
-
-class ConcreteLike(ABC): ...
-class SymbolLike(ABC): ...
-class LiteralLike(ABC): ...
-
-
-ConcreteLike.register(pd.Series)
-ConcreteLike.register(pl.Series)
-SymbolLike.register(Symbolic)
-SymbolLike.register(Call)
-LiteralLike.register(int)
-LiteralLike.register(float)
-LiteralLike.register(bool)
-LiteralLike.register(str)
-LiteralLike.register(Interval)
+    return f"{proc_lhs} := {proc_rhs}"
 
 
 def flatten_arg_kwargs(args, kwargs):
@@ -257,9 +258,9 @@ def convert(codata: DuckdbColumn, scalar: Interval):
     # TODO: refactor
     return scalar.convert(codata)
 
-@dispatch
-def convert(codata: DuckdbColumn, scalar: NamedArg):
-    return sql.literal(f"{scalar.name}:={scalar.value}")
+#@dispatch
+#def convert(codata: DuckdbColumn, scalar: NamedArg):
+#    return sql.literal(f"{scalar.name}:={scalar.value}")
 
 
 @_query_call.register(IsConcretePandas)

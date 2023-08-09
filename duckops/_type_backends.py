@@ -46,16 +46,20 @@ class AbstractBackend(metaclass=_AbstractBackendMeta):
 
 from typing import TYPE_CHECKING
 
-#if TYPE_CHECKING:
-import pandas as pd
+if TYPE_CHECKING:
+    import pandas as pd
+
+    PdSeries = pd.Series
+else:
+    class PdFrame(AbstractBackend): pass
+    class PdSeries(AbstractBackend): pass
+
+    PdSeries.register_backend("pandas", "Series")
+    PdFrame.register_backend("pandas", "DataFrame")
 
 class PlObject(AbstractBackend): pass
 class PdArray(AbstractBackend): pass
-class PdFrame(AbstractBackend): pass
-class PdSeries(AbstractBackend): pass
 
 PlObject.register_backend("polars", "DataFrame")
 PlObject.register_backend("polars", "Series")
 PdArray.register_backend("pandas.api.extensions", "ExtensionArray")
-PdSeries.register_backend("pandas", "Series")
-PdFrame.register_backend("pandas", "DataFrame")

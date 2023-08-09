@@ -1,47 +1,89 @@
-import pytest
-
-import duckops as dop
-from duckops import _types
-from duckops._core import _query_call
-
-from siuba import _
-from siuba.siu import Call
-
 import datetime
 import pandas as pd
+from pandas.testing import assert_series_equal, assert_frame_equal
+import duckdb
+import pytest
 
-# op kind (scalar, ...) x eager
-# custom data x eager
-# op varieties:
-#   - lazy arg is second
-#   - no args
-#   - TODO: dispatch any: pandas Series anywhere, Call anywhere
-# op data inputs:
-#   - lazy (Calls, Symbolics)
-#   - external (e.g. pandas Series)
-#   - built-in types
-#   - duckops types
-# op misuses:
-#   - TODO: mix of lazy and external data
-#   - TODO: mix of duckops types and external data
-def test_op_no_args():
-    res = dop.dt.now()
-    assert isinstance(res, datetime.datetime)
+from duckops.proto import date_part, Interval, concat, today, struct_pack
+
+from siuba import _, tbl, mutate, collect
+from siuba.siu import strip_symbolic, Symbolic
+from sqlalchemy import create_engine
 
 
-def test_op_no_args_lazy():
-    res = dop.dt.now(_)
-    assert isinstance(res, Call)
-    assert isinstance(_query_call(res), datetime.datetime)
+con = duckdb.connect()
+
+engine = create_engine("duckdb:///:memory:")
+
+df = pd.DataFrame({"part": ["year", "month"], "date": pd.to_datetime(["2022-01-01", "2023-02-03"]), "x": ["a", "b"], "y": ["c", "d"]})
+tbl_df = tbl(engine, "df", df)
 
 
-def test_op_arg_flipped():
-    res = dop.dt.date_part("year", _types.Interval(3, "years"))
-    assert res == 3
+def assert_is_equal(res, dst):
+    if isinstance(dst, pd.Series):
+        assert_series_equal(res, dst)
+    elif isinstance(dst, pd.DataFrame):
+        assert_frame_equal(res, dst)
+    else:
+        assert res == dst
 
 
-def test_op_ext_data():
-    col = pd.Series([pd.Timestamp("2021-01-01")])
-    res = dop.dt.date_part("year", col)
+@pytest.mark.parametrize("x, y, dst", [
+    (df["part"], df["date"], pd.Series([2022, 2])),
+    (df["part"], Interval(3, "years"), pd.Series([3, 0])),
+    ("year", df["date"], pd.Series([2022, 2023])),
+    ("year", Interval(3, "years"), 3)
+])
+def test_date_part(x, y, dst):
+    res = date_part(x, y)
 
-    assert isinstance(res, pd.Series)
+    assert isinstance(res, type(dst))
+    assert_is_equal(res, dst)
+
+
+@pytest.mark.parametrize("x, dst", [
+    ("a", "a"),
+    (pd.Series(["a", "x"]), pd.Series(["a", "x"]))
+])
+def test_func_varargs_1(x, dst):
+    res = concat(x)
+
+    assert isinstance(res, type(dst))
+    assert_is_equal(x, dst)
+
+
+@pytest.mark.parametrize("x,y,z,dst", [
+    ("a", "-", "b", "a-b"),
+    (pd.Series(["a", "x"]), "-", pd.Series(["b", "c"]), pd.Series(["a-b", "x-c"])),
+    ("-", pd.Series(["a", "x"]), pd.Series(["b", "c"]), pd.Series(["-ab", "-xc"])),
+])
+def test_func_varargs_3(x, y, z, dst):
+    res = concat(x, y, z)
+
+    assert isinstance(res, type(dst))
+    assert_is_equal(res, dst)
+
+
+def test_assign_equal_syntax():
+    res = struct_pack(a = 1, b = "x", c = Interval(2, "days"))
+
+    assert res == {'a': 1, 'b': 'x', 'c': datetime.timedelta(days=2)}
+
+
+def test_func_argless():
+    res = today()
+    isinstance(res, datetime.datetime)
+
+
+def test_func_argless_lazy():
+    res = today(_)
+    assert isinstance(res, Symbolic)
+
+    # TODO call it
+
+
+def test_func_siuba_lazy():
+    res1 = tbl_df >> mutate(res = date_part(_.part, _.date)) >> collect()
+    res2 = df >> mutate(res = date_part(_.part, _.date))
+
+    assert_is_equal(res1, res2)

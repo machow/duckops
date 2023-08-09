@@ -42,6 +42,18 @@ def interval(codata: DuckdbColumn, value: "str | None" = None, years=0, months=0
 
     return SAInterval(vals)
 
+# New types ----
+
+class Varchar:
+    def __init__(self, s: str):
+        self._d = s
+    
+    def __array__(self, dtype=None):
+        import numpy as np
+
+        return np.array([self._d], dtype=dtype)
+
+# ----
 
 class Interval(Data, Call):
     def __init__(self, func, n, unit=None):
@@ -143,12 +155,26 @@ class SAInterval(sql.expression.ColumnClause):
     @classmethod
     def from_int(cls, period: str, x: int):
         return cls(f"{x} {period}")
-    
 
+
+
+class SANamedArg(sql.expression.ClauseElement):
+    is_clause_element = True
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    
 @compiles(SAInterval)
 def _(element, compiler, **kw):
     return f"INTERVAL '{element.name}'"
 
+
+@compiles(SANamedArg)
+def _(element, compiler, **kw):
+    compiled_val = compiler.compile(element.value)
+    return f"{element.name} := {compiled_val}"
 
 @singledispatch
 def _sql_from(type_, el):

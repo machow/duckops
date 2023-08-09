@@ -1,15 +1,23 @@
 from __future__ import annotations
 
+import pandas as pd
+
+from functools import wraps, singledispatch
 from plum import dispatch
 from typing import Union
 
 # concrete data ---
 from siuba.siu import Symbolic, Call
+from siuba.siu.dispatchers import NoArgs
 
 # guts ---
 from duckops._types import Interval
-from duckops._core import _query_call, DuckdbColumn
+from duckops._core import _query_call, DuckdbColumn, DuckdbColumnAgg
 from duckops.prototypes import (
+    PdSeries,
+    DatetimeLike,
+    StringLike,
+    LiteralLike,
     IsLiteral,
     IsConcrete,
     IsConcretePandas,
@@ -23,147 +31,74 @@ from sqlalchemy import sql
 
 from typing import TYPE_CHECKING
 
-# Unions ----
-# Date, Timestamp, Time, Timestamp with Timezone
-# But also, what is Time?
-DatetimeLike = Union[Interval]
-StringLike = Union[str]
-NumberLike = Union[int, float]
-
 
 # Pre-processing steps ----
 #   * process all LiteralLike to go into SQL
 #   * ConcreteLike dispatch: separate literals and concretes
 #   * Handle homogeneous tuples as LiteralLike list
 
+def support_no_args(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        # Case 1: no arguments -----
+        if not len(args):
+            return f(NoArgs(), *args, **kwargs)
+        
+        return f(*args, **kwargs)
+    
+    return wrapped
+
+
 def create_generic(_f):
     if TYPE_CHECKING:
         return _f
 
-    func_name = _f.__name__
-
-    @dispatch
+    @support_no_args
+    @singledispatch
+    @wraps(_f)
     def f(*args, **kwargs):
         return dispatch_on_trait(f, args, kwargs)
+    
+    @f.register
+    def _no_args(x: NoArgs, *args, **kwargs):
+        # for functions like struct_pack that are all kwargs
+        return dispatch_on_trait(f, args, kwargs)
 
-    @f.dispatch
-    def _literal(codata: IsLiteral, *args):
-        return _query_call(codata, args, f)
+    @f.register
+    def _literal(codata: IsLiteral, *args, **kwargs):
+        return _query_call(codata, args, f, kwargs)
 
-    @f.dispatch
+    @f.register
     def _concrete(codata: IsConcretePandas, *args):
+        # TODO: support kwargs here
         return _query_call(codata, args, f)
 
-    @f.dispatch
+    @f.register
     def _symbol(codata: IsSymbol, *args):
+        # TODO: support kwargs here
         return to_symbol(f, args)
 
-    @f.dispatch
-    def _duckdb_translate(codata: DuckdbColumn, *args):
-        return getattr(sql.func, func_name)(*args)
+    @f.register
+    def _duckdb_translate(codata: DuckdbColumn, *args, **kwargs):
+        # TODO: grabbing __name__ inside this func feels a bit hacky
+        named_args = [assign_equals(sql.text(k), v) for k, v in kwargs.items()]
+        return getattr(sql.func, f.__name__)(*args, *named_args)
+    
+    # @_core.sql_agg("arg_max", _tr.AggOver)
 
     return f
 
 
+def register_agg(f):
+    from siuba.sql.translate import AggOver
 
-# Generic dispatch functions ----
+    f.register(DuckdbColumn, AggOver.func(f.__name__))
 
-@dispatch
-def date_part(*args, **kwargs):
-    return dispatch_on_trait(date_part, args, kwargs)
+    @f.register
+    def _duckdb_translate_agg(codata: DuckdbColumnAgg, *args):
+        return getattr(sql.func, f.__name__)(*args)
 
-
-@dispatch
-def date_part(codata: IsLiteral, part: LiteralLike, x: DatetimeLike):
-    # TODO: conversions should happen somewhere else
-    return _query_call(codata, [part, x], date_part)
-
-
-@dispatch
-def date_part(codata: IsConcretePandas, *args: pd.Series | LiteralLike):
-    # TODO: need to handle dop literal x concrete
-    return _query_call(codata, args, date_part)
-
-
-@dispatch
-def date_part(codata: IsSymbol, *args):
-    # Be sure to convert all the args
-    return to_symbol(date_part, args)
-
-
-@dispatch
-def date_part(codata: DuckdbColumn, *args):
-    return sql.func.date_part(*args)
-
-
-@dispatch
-def concat(*args, **kwargs):
-    return dispatch_on_trait(concat, args, kwargs)
-
-
-@dispatch
-def concat(codata: IsLiteral, *args):
-    return _query_call(codata, args, concat)
-
-
-@dispatch
-def concat(codata: IsConcretePandas, *args):
-    return _query_call(codata, args, concat)
-
-
-@dispatch
-def concat(codata: IsSymbol, *args):
-    return to_symbol(concat, args)
-
-
-@dispatch
-def concat(codata: DuckdbColumn, *args):
-    return sql.func.concat(*args)
-
-
-@dispatch
-def today(*args, **kwargs):
-    return dispatch_on_trait(today, args, kwargs)
-
-
-@dispatch
-def today(codata: IsLiteral):
-    return _query_call(codata, tuple(), today)
-
-
-@dispatch
-def today(codata: IsSymbol, x: SymbolLike):
-    # TODO: _ only used to invoke laziness
-    return to_symbol(today, tuple())
-
-
-@dispatch
-def today(codata: DuckdbColumn):
-    # TODO: x is a no-op param (from the need to pass in _)
-    return sql.func.today()
-
-
-# struct_pack ----
-
-@dispatch
-def struct_pack(*args, **kwargs):
-    # TODO: note this func requires named args
-    if len(args):
-        raise ValueError()
-
-    return dispatch_on_trait(struct_pack, args, kwargs)
-
-
-@dispatch
-def struct_pack(codata: IsLiteral, **kwargs):
-    return _query_call(codata, tuple(), struct_pack, kwargs)
-
-
-@dispatch
-def struct_pack(codata: DuckdbColumn, **kwargs):
-    named_args = [assign_equals(sql.text(k), v) for k, v in kwargs.items()]
-
-    return sql.func.struct_pack(*named_args)
+    return f
 
 
 from sqlalchemy.sql.expression import FunctionElement
@@ -252,11 +187,16 @@ def to_symbol(dispatcher, args):
 def convert(codata: DuckdbColumn, scalar: LiteralLike):
     return scalar
 
+@dispatch
+def convert(codata: DuckdbColumn, scalar: list):
+    args = [convert(codata, x) for x in scalar]
+    return sql.func.list_pack(*args)
 
 @dispatch
 def convert(codata: DuckdbColumn, scalar: Interval):
     # TODO: refactor
     return scalar.convert(codata)
+
 
 #@dispatch
 #def convert(codata: DuckdbColumn, scalar: NamedArg):
@@ -275,7 +215,7 @@ def _pd_query_call(codata, args, func):
     n_cols = 0
 
     for arg in args:
-        if isinstance(arg, pd.Series):
+        if isinstance(arg, PdSeries):
             name = f"col_{n_cols}"
             series_args[name] = arg
             converted.append(sql.column(name))

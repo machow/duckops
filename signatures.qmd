@@ -1,0 +1,262 @@
+---
+title: Generate signatures
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.14.5
+  kernelspec:
+    display_name: venv-duckops
+    language: python
+    name: venv-duckops
+---
+
+
+
+## Setup
+
+```{python}
+import duckdb
+import pandas as pd
+from pathlib import Path
+
+from siuba import *
+from plum import dispatch
+from pins import board_folder
+
+from textwrap import indent
+from collections import defaultdict
+
+# Union types to represent what users should see in signatures
+# signatures get reduced based on Unions (and returns)
+# e.g. StrLike, DatetimeLike
+con = duckdb.connect()
+
+par_map = {
+    'AGGREGATE_STATE<?>': "AggregateLike",
+    "INVALID": "AInvalid",
+
+    "BOOLEAN": "ABool",
+
+    "VARCHAR": "StringLike",
+    "VARCHAR[]": "list[StringLike]",
+    "VARCHAR[][]": "Any",
+
+    "DATE": "DatetimeLike",
+    "TIMESTAMP": "DatetimeLike",
+    "TIME": "DatetimeLike",
+    "INTERVAL": "DatetimeLike",
+    "TIMESTAMP WITH TIME ZONE": "DatetimeLike",
+    "TIMESTAMP_MS": "DatetimeLike",
+    "TIMESTAMP_NS": "DatetimeLike",
+    "TIMESTAMP_S": "DatetimeLike",
+    "TIME WITH TIME ZONE": "DatetimeLike",
+
+    "STRUCT()": "StructLike",
+    "STRUCT": "StructLike",
+    'STRUCT("year" BIGINT, "month" BIGINT, "day" BIGINT)': "Any",
+
+    "DECIMAL": "NumberLike",
+    "BIGINT": "NumberLike",
+    "UBIGINT": "NumberLike",
+    "UBIGINT[]": "list[NumberLike]",
+    "UINTEGER": "NumberLike",
+    "HUGEINT": "NumberLike",
+    "INTEGER": "NumberLike",
+    "DOUBLE": "NumberLike",
+    "DOUBLE[]": "list[NumberLike]",
+    "FLOAT[]": "list[NumberLike]",
+    "SMALLINT": "NumberLike",
+    "USMALLINT": "NumberLike",
+    "TINYINT": "NumberLike",
+    "UTINYINT": "NumberLike",
+    "FLOAT": "NumberLike",
+
+    "NULL": "None",
+
+    "BIT": "ABit",
+
+    "BLOB": "ABlob",
+
+    "JSON": "AJson",
+
+    "UNION": "AUnion",
+
+    "MAP": "AMap",
+
+    "LIST": "AList",
+
+    "LAMBDA": "LambdaLike",
+    "UUID": "UuidLike",
+
+    "ANY": "Any",
+    "ANY[]": "list[Any]",
+    #"ANY[][]": "list[ANY]",
+    None: "None"
+}
+
+
+tmpl_docstring = """{description}
+
+| duckdb example | result |
+| -------------- | ------ |
+| {example} | {result} |
+
+"""
+
+
+def signature(function_name: str, parameters: list[str], parameter_types: list[str], return_type: str, varargs):
+    if pd.isna(varargs):
+        varargs = None
+    
+    if pd.isna(return_type):
+        return_type = None
+
+    assert len(parameters) == len(parameter_types)
+    sig_args = []
+    for par, type_ in zip(parameters, parameter_types):
+        if type_.endswith("[][]"):
+            py_type = "Any"
+        else:
+            py_type = par_map[type_]
+        sig_args.append(f"{par}: {py_type}")
+    
+    if not return_type:
+        py_return_type = par_map[return_type]
+    elif return_type.endswith("[][]"):
+        py_return_type = "Any"
+    elif return_type.endswith("[]"):
+        py_return_type = "list[" + par_map[return_type.replace("[]", "")] + "]"
+    else:
+        py_return_type = par_map[return_type]
+
+    varargs_par = [f"*args: {par_map[varargs]}"] if varargs is not None else []
+    joined_pars = ', '.join([*sig_args, *varargs_par])
+    return f"{function_name}({joined_pars}) -> {py_return_type}"
+
+
+def get_sig(function_name):
+    df = con.execute("SELECT * FROM duckdb_functions()").df() >> add_count(_.function_name) >> filter(_.function_name == function_name, _.function_type != "table") 
+    res = df.apply(lambda d: signature(d.function_name, d.parameters, d.parameter_types, d.return_type, d.varargs), axis=1).unique()
+    return list(res)
+
+
+def generate(function_name, description, signatures: list[str], example, result, is_agg=False):
+    if pd.isna(description):
+        description = ""
+    
+    overloads = [f"@overload\ndef {sig}: ..." for sig in signatures]
+
+    first_sig = signatures[0]
+    doc = indent(tmpl_docstring.format(description=description, example=example, result = result), " "*4).lstrip(" ")
+
+    if is_agg:
+        str_decs = "@register_agg\n@create_generic"
+    else:
+        str_decs = "@create_generic"
+    final_def = f'{str_decs}\ndef {first_sig}:\n    """{doc}\n    """'
+
+    return "\n\n".join([*overloads[1:], final_def])
+```
+
+## Check signatures
+
+```{python}
+[
+    *get_sig("date_part"),
+    *get_sig("concat"),
+    *get_sig("hash"),
+    *get_sig("greatest")
+]
+
+print(generate("date_part", "some description\nyo\nyo", get_sig("date_part")))
+```
+
+## Fetch function data
+
+```{python}
+board = board_folder("scripts/_board")
+web_functions = board.pin_read("web_functions")
+db_function_names = con.execute("SELECT * FROM duckdb_functions()").df() >> add_count(_.function_name) >> filter(_.function_type.isin(["aggregate", "scalar"]), _.function_name.str.contains("^[a-zA-Z]")) >>  distinct(_.function_name, _keep_all=True)
+```
+
+## Generate signatures
+
+```{python}
+## Generate
+module_names = {
+    "char": "str",
+    "aggregates": "agg",
+    "blob": "blob",
+    "date": "dt",
+    "datepart": "dt",
+    "interval": "dt",
+    "json": "json",
+    "nested": "nested",
+    "numeric": "num",
+    "time": "dt",
+    "timestamp": "dt",
+    "timestamptz": "dt",
+    "utility": "util",
+    "window": "win",
+}
+
+all_functions = (
+    db_function_names
+    >> select(-_.description)
+    >> left_join(_, web_functions >> select(_.function_name, _.page, _.description, _.example, _.result), "function_name")
+    >> arrange(_.function_name)
+)
+
+code = defaultdict(lambda: dict())
+for k, row in all_functions.iterrows():
+    category = module_names.get(row["page"], "unknown")
+    res = generate(
+        row["function_name"],
+        row["description"],
+        get_sig(row["function_name"]),
+        row["example"],
+        row["result"],
+        is_agg = category == "agg"
+    )
+    code[category][row["function_name"]] = res
+```
+
+```{python}
+print("\n\n\n".join(code["str"].values()))
+```
+
+## Dump
+
+```{python}
+MOD_HEADER = """
+from __future__ import annotations
+
+from typing import overload
+from duckops.proto import create_generic, register_agg
+from duckops.prototypes import *
+"""
+
+def create_module(mod_name: str, entries: dict[str, str]):
+    all_exports = indent(",\n".join(map('"{0}"'.format, entries)), " "*4)
+    str_exports = f"__all__ = (\n{all_exports}\n)"
+    str_content = "\n\n\n".join(entries.values())
+
+    str_mod = f"{MOD_HEADER}\n\n{str_exports}\n\n\n{str_content}"
+    p_mod = Path("duckops") / f"{mod_name}.py"
+    p_mod.write_text(str_mod)
+
+    
+
+for mod_name, entries in code.items():
+    create_module(mod_name, entries)
+```
+
+# Noodle
+
+```{python}
+con.execute("SELECT * FROM duckdb_functions()").df() >> filter(_.function_name == "list_pack")
+```
+

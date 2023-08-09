@@ -1,472 +1,875 @@
 
-from . import _core
-from siuba.sql import translate as _tr
-from siuba.sql.dialects.duckdb import DuckdbColumn, DuckdbColumnAgg
+from __future__ import annotations
 
-@_core.sql_agg("arg_max", _tr.AggOver)
-def arg_max(codata: DuckdbColumnAgg, *args):
-    """Finds the row with the maximum val. Calculates the arg expression at that row.
-| duckdb example | result |
-| -------------- | ------ |
-| arg_max(A,B) | nan |
-"""
+from typing import overload
+from duckops.proto import create_generic, register_agg
+from duckops.prototypes import *
 
 
-
-@_core.sql_agg("arg_min", _tr.AggOver)
-def arg_min(codata: DuckdbColumnAgg, *args):
-    """Finds the row with the minimum val. Calculates the arg expression at that row.
-| duckdb example | result |
-| -------------- | ------ |
-| arg_min(A,B) | nan |
-"""
-
-
-
-@_core.sql_agg("bool_and", _tr.AggOver)
-def bool_and(codata: DuckdbColumnAgg, *args):
-    """Returns TRUE if every input value is TRUE, otherwise FALSE.
-| duckdb example | result |
-| -------------- | ------ |
-| bool_and(A) | nan |
-"""
-
-
-
-@_core.sql_agg("bool_or", _tr.AggOver)
-def bool_or(codata: DuckdbColumnAgg, *args):
-    """Returns TRUE if any input value is TRUE, otherwise FALSE.
-| duckdb example | result |
-| -------------- | ------ |
-| bool_or(A) | nan |
-"""
-
-
-
-@_core.sql_agg("product", _tr.AggOver)
-def product(codata: DuckdbColumnAgg, *args):
-    """Calculates the product of all tuples in arg
-| duckdb example | result |
-| -------------- | ------ |
-| product(A) | nan |
-"""
-
-
-
-@_core.sql_agg("approx_count_distinct", _tr.AggOver)
-def approx_count_distinct(codata: DuckdbColumnAgg, *args):
-    """Gives the approximate count of distintinct elements using HyperLogLog.
-| duckdb example | result |
-| -------------- | ------ |
-| approx_count_distinct(A) | nan |
-"""
-
-
-
-@_core.sql_agg("string_agg", _tr.AggOver)
-def string_agg(codata: DuckdbColumnAgg, *args):
-    """Concatenates the column string values with a separator
-| duckdb example | result |
-| -------------- | ------ |
-| string_agg(S, ',') | nan |
-"""
+__all__ = (
+    "any_value",
+    "approx_count_distinct",
+    "approx_quantile",
+    "arg_max",
+    "arg_min",
+    "avg",
+    "bit_and",
+    "bit_or",
+    "bit_xor",
+    "bool_and",
+    "bool_or",
+    "corr",
+    "count",
+    "covar_pop",
+    "entropy",
+    "favg",
+    "first",
+    "fsum",
+    "histogram",
+    "kurtosis",
+    "last",
+    "list",
+    "mad",
+    "max",
+    "median",
+    "min",
+    "mode",
+    "product",
+    "quantile_cont",
+    "quantile_disc",
+    "regr_avgx",
+    "regr_avgy",
+    "regr_count",
+    "regr_intercept",
+    "regr_r2",
+    "regr_slope",
+    "regr_sxx",
+    "regr_sxy",
+    "regr_syy",
+    "reservoir_quantile",
+    "skewness",
+    "stddev_pop",
+    "stddev_samp",
+    "string_agg",
+    "sum",
+    "var_pop",
+    "var_samp"
+)
 
 
+@overload
+def any_value(col0: Any) -> Any: ...
 
-@_core.sql_agg("fsum", _tr.AggOver)
-def fsum(codata: DuckdbColumnAgg, *args):
-    """Calculates the sum using a more accurate floating point summation (Kahan Sum).
-| duckdb example | result |
-| -------------- | ------ |
-| fsum(A) | nan |
-"""
-
-
-
-@_core.sql_agg("sum", _tr.AggOver)
-def sum(codata: DuckdbColumnAgg, *args):
-    """Calculates the sum value for all tuples in arg.
-| duckdb example | result |
-| -------------- | ------ |
-| sum(A) | nan |
-"""
-
-
-
-@_core.sql_agg("min", _tr.AggOver)
-def min(codata: DuckdbColumnAgg, *args):
-    """Returns the minumum value present in arg.
-| duckdb example | result |
-| -------------- | ------ |
-| min(A) | nan |
-"""
-
-
-
-@_core.sql_agg("max", _tr.AggOver)
-def max(codata: DuckdbColumnAgg, *args):
-    """Returns the maximum value present in arg.
-| duckdb example | result |
-| -------------- | ------ |
-| max(A) | nan |
-"""
-
-
-
-@_core.sql_agg("any_value", _tr.AggOver)
-def any_value(codata: DuckdbColumnAgg, *args):
+@register_agg
+@create_generic
+def any_value(col0: NumberLike) -> NumberLike:
     """Returns the first non-null value from arg.
-| duckdb example | result |
-| -------------- | ------ |
-| any_value(A) | nan |
-"""
 
+    | duckdb example | result |
+    | -------------- | ------ |
+    | any_value(A) | nan |
 
 
-@_core.sql_agg("last", _tr.AggOver)
-def last(codata: DuckdbColumnAgg, *args):
-    """Returns the last value of a column.
-| duckdb example | result |
-| -------------- | ------ |
-| last(A) | nan |
-"""
+    """
 
 
+@overload
+def approx_count_distinct(col0: StringLike) -> NumberLike: ...
 
-@_core.sql_agg("first", _tr.AggOver)
-def first(codata: DuckdbColumnAgg, *args):
-    """Returns the first value of a column.
-| duckdb example | result |
-| -------------- | ------ |
-| first(A) | nan |
-"""
+@overload
+def approx_count_distinct(col0: DatetimeLike) -> NumberLike: ...
 
+@register_agg
+@create_generic
+def approx_count_distinct(col0: NumberLike) -> NumberLike:
+    """Gives the approximate count of distintinct elements using HyperLogLog.
 
+    | duckdb example | result |
+    | -------------- | ------ |
+    | approx_count_distinct(A) | nan |
 
-@_core.sql_agg("count", _tr.AggOver)
-def count(codata: DuckdbColumnAgg, *args):
-    """Calculates the number of tuples tuples in arg.
-| duckdb example | result |
-| -------------- | ------ |
-| count(A) | nan |
-"""
 
+    """
 
 
-@_core.sql_agg("bit_xor", _tr.AggOver)
-def bit_xor(codata: DuckdbColumnAgg, *args):
-    """Returns the bitwise XOR of all bits in a given expression.
-| duckdb example | result |
-| -------------- | ------ |
-| bit_xor(A) | nan |
-"""
+@overload
+def approx_quantile(col0: NumberLike, col1: list[NumberLike]) -> list[NumberLike]: ...
 
-
-
-@_core.sql_agg("bit_or", _tr.AggOver)
-def bit_or(codata: DuckdbColumnAgg, *args):
-    """Returns the bitwise OR of all bits in a given expression.
-| duckdb example | result |
-| -------------- | ------ |
-| bit_or(A) | nan |
-"""
-
-
-
-@_core.sql_agg("bit_and", _tr.AggOver)
-def bit_and(codata: DuckdbColumnAgg, *args):
-    """Returns the bitwise AND of all bits in a given expression .
-| duckdb example | result |
-| -------------- | ------ |
-| bit_and(A) | nan |
-"""
-
-
-
-@_core.sql_agg("corr", _tr.AggOver)
-def corr(codata: DuckdbColumnAgg, *args):
-    """Returns the correlation coefficient for non-null pairs in a group.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("var_samp", _tr.AggOver)
-def var_samp(codata: DuckdbColumnAgg, *args):
-    """Returns the sample variance of all input values.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("var_pop", _tr.AggOver)
-def var_pop(codata: DuckdbColumnAgg, *args):
-    """Returns the population variance.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("stddev_pop", _tr.AggOver)
-def stddev_pop(codata: DuckdbColumnAgg, *args):
-    """Returns the population standard deviation.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("stddev_samp", _tr.AggOver)
-def stddev_samp(codata: DuckdbColumnAgg, *args):
-    """Returns the sample standard deviation.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("covar_pop", _tr.AggOver)
-def covar_pop(codata: DuckdbColumnAgg, *args):
-    """Returns the population covariance of input values.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("favg", _tr.AggOver)
-def favg(codata: DuckdbColumnAgg, *args):
-    """Calculates the average using a more accurate floating point summation (Kahan Sum).
-| duckdb example | result |
-| -------------- | ------ |
-| favg(A) | nan |
-"""
-
-
-
-@_core.sql_agg("avg", _tr.AggOver)
-def avg(codata: DuckdbColumnAgg, *args):
-    """Calculates the average value for all tuples in arg.
-| duckdb example | result |
-| -------------- | ------ |
-| avg(A) | nan |
-"""
-
-
-
-@_core.sql_agg("skewness", _tr.AggOver)
-def skewness(codata: DuckdbColumnAgg, *args):
-    """Returns the skewness of all input values.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("kurtosis", _tr.AggOver)
-def kurtosis(codata: DuckdbColumnAgg, *args):
-    """Returns the excess kurtosis of all input values.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("entropy", _tr.AggOver)
-def entropy(codata: DuckdbColumnAgg, *args):
-    """Returns the log-2 entropy of count input-values.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("list", _tr.AggOver)
-def list(codata: DuckdbColumnAgg, *args):
-    """Returns a LIST containing all the values of a column.
-| duckdb example | result |
-| -------------- | ------ |
-| list(A) | nan |
-"""
-
-
-
-@_core.sql_agg("histogram", _tr.AggOver)
-def histogram(codata: DuckdbColumnAgg, *args):
-    """Returns a LIST of STRUCTs with the fields bucket and count.
-| duckdb example | result |
-| -------------- | ------ |
-| histogram(A) | nan |
-"""
-
-
-
-@_core.sql_agg("median", _tr.AggOver)
-def median(codata: DuckdbColumnAgg, *args):
-    """Returns the middle value of the set. NULL values are ignored. For even value counts, quantitiative values are averaged and ordinal values return the lower value.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("quantile_disc", _tr.AggOver)
-def quantile_disc(codata: DuckdbColumnAgg, *args):
-    """Returns the exact quantile number between 0 and 1 . If pos is a LIST of FLOATs, then the result is a LIST of the corresponding exact quantiles.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("quantile_cont", _tr.AggOver)
-def quantile_cont(codata: DuckdbColumnAgg, *args):
-    """Returns the intepolated quantile number between 0 and 1 . If pos is a LIST of FLOATs, then the result is a LIST of the corresponding intepolated quantiles.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("mad", _tr.AggOver)
-def mad(codata: DuckdbColumnAgg, *args):
-    """Returns the median absolute deviation for the values within x. NULL values are ignored. Temporal types return a positive INTERVAL.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("mode", _tr.AggOver)
-def mode(codata: DuckdbColumnAgg, *args):
-    """Returns the most frequent value for the values within x. NULL values are ignored.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
-
-
-
-@_core.sql_agg("approx_quantile", _tr.AggOver)
-def approx_quantile(codata: DuckdbColumnAgg, *args):
+@register_agg
+@create_generic
+def approx_quantile(col0: NumberLike, col1: NumberLike) -> NumberLike:
     """Gives the approximate quantile using T-Digest.
-| duckdb example | result |
-| -------------- | ------ |
-| approx_quantile(A,0.5) | nan |
-"""
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | approx_quantile(A,0.5) | nan |
 
 
-
-@_core.sql_agg("reservoir_quantile", _tr.AggOver)
-def reservoir_quantile(codata: DuckdbColumnAgg, *args):
-    """Gives the approximate quantile using reservoir sampling, the sample size is optional and uses 8192 as a default size.
-| duckdb example | result |
-| -------------- | ------ |
-| reservoir_quantile(A,0.5,1024) | nan |
-"""
+    """
 
 
+@overload
+def arg_max(col0: NumberLike, col1: StringLike) -> NumberLike: ...
 
-@_core.sql_agg("regr_avgx", _tr.AggOver)
-def regr_avgx(codata: DuckdbColumnAgg, *args):
-    """Returns the average of the independent variable for non-null pairs in a group, where x is the independent variable and y is the dependent variable.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@overload
+def arg_max(col0: NumberLike, col1: DatetimeLike) -> NumberLike: ...
 
+@overload
+def arg_max(col0: NumberLike, col1: ABlob) -> NumberLike: ...
 
+@overload
+def arg_max(col0: StringLike, col1: NumberLike) -> StringLike: ...
 
-@_core.sql_agg("regr_avgy", _tr.AggOver)
-def regr_avgy(codata: DuckdbColumnAgg, *args):
-    """Returns the average of the dependent variable for non-null pairs in a group, where x is the independent variable and y is the dependent variable.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@overload
+def arg_max(col0: StringLike, col1: StringLike) -> StringLike: ...
 
+@overload
+def arg_max(col0: StringLike, col1: DatetimeLike) -> StringLike: ...
 
+@overload
+def arg_max(col0: StringLike, col1: ABlob) -> StringLike: ...
 
-@_core.sql_agg("regr_count", _tr.AggOver)
-def regr_count(codata: DuckdbColumnAgg, *args):
-    """Returns the number of non-null number pairs in a group.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@overload
+def arg_max(col0: DatetimeLike, col1: NumberLike) -> DatetimeLike: ...
 
+@overload
+def arg_max(col0: DatetimeLike, col1: StringLike) -> DatetimeLike: ...
 
+@overload
+def arg_max(col0: DatetimeLike, col1: DatetimeLike) -> DatetimeLike: ...
 
-@_core.sql_agg("regr_slope", _tr.AggOver)
-def regr_slope(codata: DuckdbColumnAgg, *args):
-    """Returns the slope of the linear regression line for non-null pairs in a group.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@overload
+def arg_max(col0: DatetimeLike, col1: ABlob) -> DatetimeLike: ...
 
+@overload
+def arg_max(col0: ABlob, col1: NumberLike) -> ABlob: ...
 
+@overload
+def arg_max(col0: ABlob, col1: StringLike) -> ABlob: ...
 
-@_core.sql_agg("regr_r2", _tr.AggOver)
-def regr_r2(codata: DuckdbColumnAgg, *args):
-    """Returns the coefficient of determination for non-null pairs in a group.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@overload
+def arg_max(col0: ABlob, col1: DatetimeLike) -> ABlob: ...
 
+@overload
+def arg_max(col0: ABlob, col1: ABlob) -> ABlob: ...
 
+@overload
+def arg_max(col0: Any, col1: NumberLike) -> Any: ...
 
-@_core.sql_agg("regr_syy", _tr.AggOver)
-def regr_syy(codata: DuckdbColumnAgg, *args):
-    """-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@overload
+def arg_max(col0: Any, col1: StringLike) -> Any: ...
 
+@overload
+def arg_max(col0: Any, col1: DatetimeLike) -> Any: ...
 
+@overload
+def arg_max(col0: Any, col1: ABlob) -> Any: ...
 
-@_core.sql_agg("regr_sxx", _tr.AggOver)
-def regr_sxx(codata: DuckdbColumnAgg, *args):
-    """-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+@register_agg
+@create_generic
+def arg_max(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Finds the row with the maximum val. Calculates the arg expression at that row.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | arg_max(A,B) | nan |
 
 
+    """
 
-@_core.sql_agg("regr_sxy", _tr.AggOver)
-def regr_sxy(codata: DuckdbColumnAgg, *args):
+
+@overload
+def arg_min(col0: NumberLike, col1: StringLike) -> NumberLike: ...
+
+@overload
+def arg_min(col0: NumberLike, col1: DatetimeLike) -> NumberLike: ...
+
+@overload
+def arg_min(col0: NumberLike, col1: ABlob) -> NumberLike: ...
+
+@overload
+def arg_min(col0: StringLike, col1: NumberLike) -> StringLike: ...
+
+@overload
+def arg_min(col0: StringLike, col1: StringLike) -> StringLike: ...
+
+@overload
+def arg_min(col0: StringLike, col1: DatetimeLike) -> StringLike: ...
+
+@overload
+def arg_min(col0: StringLike, col1: ABlob) -> StringLike: ...
+
+@overload
+def arg_min(col0: DatetimeLike, col1: NumberLike) -> DatetimeLike: ...
+
+@overload
+def arg_min(col0: DatetimeLike, col1: StringLike) -> DatetimeLike: ...
+
+@overload
+def arg_min(col0: DatetimeLike, col1: DatetimeLike) -> DatetimeLike: ...
+
+@overload
+def arg_min(col0: DatetimeLike, col1: ABlob) -> DatetimeLike: ...
+
+@overload
+def arg_min(col0: ABlob, col1: NumberLike) -> ABlob: ...
+
+@overload
+def arg_min(col0: ABlob, col1: StringLike) -> ABlob: ...
+
+@overload
+def arg_min(col0: ABlob, col1: DatetimeLike) -> ABlob: ...
+
+@overload
+def arg_min(col0: ABlob, col1: ABlob) -> ABlob: ...
+
+@overload
+def arg_min(col0: Any, col1: NumberLike) -> Any: ...
+
+@overload
+def arg_min(col0: Any, col1: StringLike) -> Any: ...
+
+@overload
+def arg_min(col0: Any, col1: DatetimeLike) -> Any: ...
+
+@overload
+def arg_min(col0: Any, col1: ABlob) -> Any: ...
+
+@register_agg
+@create_generic
+def arg_min(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Finds the row with the minimum val. Calculates the arg expression at that row.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | arg_min(A,B) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def avg(col0: NumberLike) -> NumberLike:
+    """Calculates the average value for all tuples in arg.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | avg(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def bit_and(col0: NumberLike) -> NumberLike:
+    """Returns the bitwise AND of all bits in a given expression .
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | bit_and(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def bit_or(col0: NumberLike) -> NumberLike:
+    """Returns the bitwise OR of all bits in a given expression.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | bit_or(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def bit_xor(col0: NumberLike) -> NumberLike:
+    """Returns the bitwise XOR of all bits in a given expression.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | bit_xor(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def bool_and(col0: ABool) -> ABool:
+    """Returns TRUE if every input value is TRUE, otherwise FALSE.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | bool_and(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def bool_or(col0: ABool) -> ABool:
+    """Returns TRUE if any input value is TRUE, otherwise FALSE.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | bool_or(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def corr(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the correlation coefficient for non-null pairs in a group.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def count() -> NumberLike: ...
+
+@register_agg
+@create_generic
+def count(col0: Any) -> NumberLike:
+    """Calculates the number of tuples tuples in arg.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | count(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def covar_pop(col0: NumberLike, col1: NumberLike) -> NumberLike:
     """Returns the population covariance of input values.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
 
 
+    """
 
-@_core.sql_agg("regr_intercept", _tr.AggOver)
-def regr_intercept(codata: DuckdbColumnAgg, *args):
+
+@overload
+def entropy(col0: StringLike) -> NumberLike: ...
+
+@overload
+def entropy(col0: DatetimeLike) -> NumberLike: ...
+
+@register_agg
+@create_generic
+def entropy(col0: NumberLike) -> NumberLike:
+    """Returns the log-2 entropy of count input-values.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def favg(col0: NumberLike) -> NumberLike:
+    """Calculates the average using a more accurate floating point summation (Kahan Sum).
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | favg(A) | nan |
+
+
+    """
+
+
+@overload
+def first(col0: Any) -> Any: ...
+
+@register_agg
+@create_generic
+def first(col0: NumberLike) -> NumberLike:
+    """Returns the first value of a column.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | first(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def fsum(col0: NumberLike) -> NumberLike:
+    """Calculates the sum using a more accurate floating point summation (Kahan Sum).
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | fsum(A) | nan |
+
+
+    """
+
+
+@overload
+def histogram(col0: NumberLike) -> AMap: ...
+
+@overload
+def histogram(col0: StringLike) -> AMap: ...
+
+@overload
+def histogram(col0: DatetimeLike) -> AMap: ...
+
+@register_agg
+@create_generic
+def histogram(col0: ABool) -> AMap:
+    """Returns a LIST of STRUCTs with the fields bucket and count.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | histogram(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def kurtosis(col0: NumberLike) -> NumberLike:
+    """Returns the excess kurtosis of all input values.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def last(col0: Any) -> Any: ...
+
+@register_agg
+@create_generic
+def last(col0: NumberLike) -> NumberLike:
+    """Returns the last value of a column.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | last(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def list(col0: Any) -> AList:
+    """Returns a LIST containing all the values of a column.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | list(A) | nan |
+
+
+    """
+
+
+@overload
+def mad(col0: DatetimeLike) -> DatetimeLike: ...
+
+@register_agg
+@create_generic
+def mad(col0: NumberLike) -> NumberLike:
+    """Returns the median absolute deviation for the values within x. NULL values are ignored. Temporal types return a positive INTERVAL.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def max(col0: Any) -> Any: ...
+
+@register_agg
+@create_generic
+def max(col0: NumberLike) -> NumberLike:
+    """Returns the maximum value present in arg.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | max(A) | nan |
+
+
+    """
+
+
+@overload
+def median(col0: DatetimeLike) -> DatetimeLike: ...
+
+@overload
+def median(col0: StringLike) -> StringLike: ...
+
+@register_agg
+@create_generic
+def median(col0: NumberLike) -> NumberLike:
+    """Returns the middle value of the set. NULL values are ignored. For even value counts, quantitiative values are averaged and ordinal values return the lower value.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def min(col0: Any) -> Any: ...
+
+@register_agg
+@create_generic
+def min(col0: NumberLike) -> NumberLike:
+    """Returns the minumum value present in arg.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | min(A) | nan |
+
+
+    """
+
+
+@overload
+def mode(col0: DatetimeLike) -> DatetimeLike: ...
+
+@overload
+def mode(col0: StringLike) -> StringLike: ...
+
+@register_agg
+@create_generic
+def mode(col0: NumberLike) -> NumberLike:
+    """Returns the most frequent value for the values within x. NULL values are ignored.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def product(col0: NumberLike) -> NumberLike:
+    """Calculates the product of all tuples in arg
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | product(A) | nan |
+
+
+    """
+
+
+@overload
+def quantile_cont(col0: NumberLike, col1: list[NumberLike]) -> list[NumberLike]: ...
+
+@overload
+def quantile_cont(col0: DatetimeLike, col1: NumberLike) -> DatetimeLike: ...
+
+@overload
+def quantile_cont(col0: DatetimeLike, col1: list[NumberLike]) -> list[DatetimeLike]: ...
+
+@register_agg
+@create_generic
+def quantile_cont(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the intepolated quantile number between 0 and 1 . If pos is a LIST of FLOATs, then the result is a LIST of the corresponding intepolated quantiles.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def quantile_disc(col0: NumberLike, col1: list[NumberLike]) -> list[NumberLike]: ...
+
+@overload
+def quantile_disc(col0: DatetimeLike, col1: NumberLike) -> DatetimeLike: ...
+
+@overload
+def quantile_disc(col0: DatetimeLike, col1: list[NumberLike]) -> list[DatetimeLike]: ...
+
+@overload
+def quantile_disc(col0: StringLike, col1: NumberLike) -> StringLike: ...
+
+@overload
+def quantile_disc(col0: StringLike, col1: list[NumberLike]) -> list[StringLike]: ...
+
+@register_agg
+@create_generic
+def quantile_disc(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the exact quantile number between 0 and 1 . If pos is a LIST of FLOATs, then the result is a LIST of the corresponding exact quantiles.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_avgx(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the average of the independent variable for non-null pairs in a group, where x is the independent variable and y is the dependent variable.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_avgy(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the average of the dependent variable for non-null pairs in a group, where x is the independent variable and y is the dependent variable.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_count(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the number of non-null number pairs in a group.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_intercept(col0: NumberLike, col1: NumberLike) -> NumberLike:
     """Returns the intercept of the univariate linear regression line for non-null pairs in a group.
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |
-"""
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_r2(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the coefficient of determination for non-null pairs in a group.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_slope(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the slope of the linear regression line for non-null pairs in a group.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_sxx(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """-
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_sxy(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Returns the population covariance of input values.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def regr_syy(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """-
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def reservoir_quantile(col0: NumberLike, col1: NumberLike, col2: NumberLike) -> NumberLike: ...
+
+@overload
+def reservoir_quantile(col0: NumberLike, col1: list[NumberLike]) -> list[NumberLike]: ...
+
+@overload
+def reservoir_quantile(col0: NumberLike, col1: list[NumberLike], col2: NumberLike) -> list[NumberLike]: ...
+
+@register_agg
+@create_generic
+def reservoir_quantile(col0: NumberLike, col1: NumberLike) -> NumberLike:
+    """Gives the approximate quantile using reservoir sampling, the sample size is optional and uses 8192 as a default size.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | reservoir_quantile(A,0.5,1024) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def skewness(col0: NumberLike) -> NumberLike:
+    """Returns the skewness of all input values.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def stddev_pop(col0: NumberLike) -> NumberLike:
+    """Returns the population standard deviation.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def stddev_samp(col0: NumberLike) -> NumberLike:
+    """Returns the sample standard deviation.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@overload
+def string_agg(col0: StringLike, col1: StringLike) -> StringLike: ...
+
+@register_agg
+@create_generic
+def string_agg(col0: StringLike) -> StringLike:
+    """Concatenates the column string values with a separator
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | string_agg(S, ',') | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def sum(col0: NumberLike) -> NumberLike:
+    """Calculates the sum value for all tuples in arg.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | sum(A) | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def var_pop(col0: NumberLike) -> NumberLike:
+    """Returns the population variance.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """
+
+
+@register_agg
+@create_generic
+def var_samp(col0: NumberLike) -> NumberLike:
+    """Returns the sample variance of all input values.
+
+    | duckdb example | result |
+    | -------------- | ------ |
+    | nan | nan |
+
+
+    """

@@ -4,7 +4,10 @@ from pandas.testing import assert_series_equal, assert_frame_equal
 import duckdb
 import pytest
 
-from duckops.proto import date_part, Interval, concat, today, struct_pack
+from duckops.prototypes import Interval
+from duckops.str import concat
+from duckops.dt import date_part, today
+from duckops.nested import struct_pack
 
 from siuba import _, tbl, mutate, collect
 from siuba.siu import strip_symbolic, Symbolic

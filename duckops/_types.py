@@ -143,7 +143,6 @@ class Interval(Data, Call):
     
     @convert.register(DuckdbColumn)
     def _(self, codata):
-        print("CONVERTING")
         return interval(codata, **{self.unit: self.n})
 
 class SAInterval(sql.expression.ColumnClause):

@@ -1,14 +1,16 @@
 from abc import ABC
-from typing import Any
+from typing import Any, Union
 
 from siuba.siu import Symbolic, Call
 from duckops._types import Interval
+from duckops._type_backends import PdSeries
 
 import pandas as pd
 import polars as pl
 
 AInvalid = Any
 ABool = Any
+ABlob = Any
 StructLike = Any
 ABit = Any
 ABlock = Any
@@ -19,6 +21,14 @@ AList = Any
 UnionLike = Any
 LambdaLike = Any
 UuidLike = Any
+
+
+# Unions ----
+# Date, Timestamp, Time, Timestamp with Timezone
+# But also, what is Time?
+DatetimeLike = Union[Interval]
+StringLike = Union[str]
+NumberLike = Union[int, float]
 
 
 # Traits ----
@@ -46,4 +56,6 @@ LiteralLike.register(float)
 LiteralLike.register(bool)
 LiteralLike.register(str)
 LiteralLike.register(Interval)
+LiteralLike.register(list)
+LiteralLike.register(type(None))
 

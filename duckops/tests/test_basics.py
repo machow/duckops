@@ -8,6 +8,7 @@ from duckops.prototypes import Interval
 from duckops.str import concat
 from duckops.dt import date_part, today
 from duckops.nested import struct_pack
+from duckops.win import row_number
 
 from siuba import _, tbl, mutate, collect
 from siuba.siu import strip_symbolic, Symbolic
@@ -18,7 +19,12 @@ con = duckdb.connect()
 
 engine = create_engine("duckdb:///:memory:")
 
-df = pd.DataFrame({"part": ["year", "month"], "date": pd.to_datetime(["2022-01-01", "2023-02-03"]), "x": ["a", "b"], "y": ["c", "d"]})
+df = pd.DataFrame({
+    "part": ["year", "month"],
+    "date": pd.to_datetime(["2022-01-01", "2023-02-03"]),
+    "x": ["a", "b"],
+    "y": ["c", "d"]
+})
 tbl_df = tbl(engine, "df", df)
 
 
@@ -83,6 +89,11 @@ def test_func_argless_lazy():
     assert isinstance(res, Symbolic)
 
     # TODO call it
+
+
+def test_func_win():
+    res = row_number(df["x"])
+    assert res.tolist() == [1, 2]
 
 
 def test_func_siuba_lazy():

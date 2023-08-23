@@ -1,10 +1,12 @@
 
-from . import _core
+#from . import _core
+from .proto import create_generic, sql_win, NoArgOver
 from siuba.sql import translate as _tr
-from siuba.sql.dialects.duckdb import DuckdbColumn, DuckdbColumnAgg
 
-@_core.sql_win("cume_dist", _tr.RankOver)
-def cume_dist(codata: DuckdbColumn, *args):
+
+@sql_win(_tr.RankOver)
+@create_generic
+def cume_dist(*args):
     """The cumulative distribution: (number of partition rows preceding or peer with current row) / total partition rows.
 | duckdb example | result |
 | -------------- | ------ |
@@ -13,8 +15,9 @@ def cume_dist(codata: DuckdbColumn, *args):
 
 
 
-@_core.sql_win("dense_rank", _tr.RankOver)
-def dense_rank(codata: DuckdbColumn, *args):
+@sql_win(_tr.RankOver)
+@create_generic
+def dense_rank(*args):
     """The rank of the current row without gaps; this function counts peer groups.
 | duckdb example | result |
 | -------------- | ------ |
@@ -22,9 +25,9 @@ def dense_rank(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("first_value", _tr.CumlOver)
-def first_value(codata: DuckdbColumn, *args):
+@sql_win(_tr.RankOver)
+@create_generic
+def first_value(*args):
     """Returns expr evaluated at the row that is the first row of the window frame.
 | duckdb example | result |
 | -------------- | ------ |
@@ -33,8 +36,9 @@ def first_value(codata: DuckdbColumn, *args):
 
 
 
-@_core.sql_win("lag", _tr.CumlOver)
-def lag(codata: DuckdbColumn, *args):
+@sql_win(_tr.CumlOver)
+@create_generic
+def lag(*args):
     """Returns expr evaluated at the row that is offset rows before the current row within the partition; if there is no such row, instead return default (which must be of the same type as expr). Both offset and default are evaluated with respect to the current row. If omitted, offset defaults to 1 and default to null.
 | duckdb example | result |
 | -------------- | ------ |
@@ -43,8 +47,9 @@ def lag(codata: DuckdbColumn, *args):
 
 
 
-@_core.sql_win("last_value", _tr.CumlOver)
-def last_value(codata: DuckdbColumn, *args):
+@sql_win(_tr.CumlOver)
+@create_generic
+def last_value(*args):
     """Returns expr evaluated at the row that is the last row of the window frame.
 | duckdb example | result |
 | -------------- | ------ |
@@ -52,9 +57,9 @@ def last_value(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("lead", _tr.CumlOver)
-def lead(codata: DuckdbColumn, *args):
+@sql_win(_tr.CumlOver)
+@create_generic
+def lead(*args):
     """Returns expr evaluated at the row that is offset rows after the current row within the partition; if there is no such row, instead return default (which must be of the same type as expr). Both offset and default are evaluated with respect to the current row. If omitted, offset defaults to 1 and default to null.
 | duckdb example | result |
 | -------------- | ------ |
@@ -62,9 +67,9 @@ def lead(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("nth_value", _tr.CumlOver)
-def nth_value(codata: DuckdbColumn, *args):
+@sql_win(_tr.CumlOver)
+@create_generic
+def nth_value(*args):
     """Returns expr evaluated at the nth row of the window frame (counting from 1); null if no such row.
 | duckdb example | result |
 | -------------- | ------ |
@@ -72,9 +77,9 @@ def nth_value(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("ntile", _tr.RankOver)
-def ntile(codata: DuckdbColumn, *args):
+@sql_win(_tr.RankOver)
+@create_generic
+def ntile(*args):
     """An integer ranging from 1 to the argument value, dividing the partition as equally as possible.
 | duckdb example | result |
 | -------------- | ------ |
@@ -82,9 +87,9 @@ def ntile(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("percent_rank", _tr.RankOver)
-def percent_rank(codata: DuckdbColumn, *args):
+@sql_win(_tr.RankOver)
+@create_generic
+def percent_rank(*args):
     """The relative rank of the current row: (rank() - 1) / (total partition rows - 1).
 | duckdb example | result |
 | -------------- | ------ |
@@ -92,9 +97,9 @@ def percent_rank(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("rank", _tr.RankOver)
-def rank(codata: DuckdbColumn, *args):
+@sql_win(_tr.RankOver)
+@create_generic
+def rank(*args):
     """The rank of the current row with gaps; same as row_number of its first peer.
 | duckdb example | result |
 | -------------- | ------ |
@@ -102,9 +107,9 @@ def rank(codata: DuckdbColumn, *args):
 """
 
 
-
-@_core.sql_win("row_number", _core.NoArgOver)
-def row_number(codata: DuckdbColumn, *args):
+@sql_win(NoArgOver)
+@create_generic
+def row_number(*args):
     """The number of the current row within the partition, counting from 1.
 | duckdb example | result |
 | -------------- | ------ |

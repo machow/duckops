@@ -12,7 +12,10 @@ from siuba.siu.dispatchers import NoArgs
 
 # guts ---
 from duckops._types import Interval
-from duckops._core import _query_call, DuckdbColumn, DuckdbColumnAgg
+from siuba.sql.dialects.duckdb import DuckdbColumn, DuckdbColumnAgg
+from siuba.sql.translate import CustomOverClause, RankOver, CumlOver
+#from duckops._core import _query_call, DuckdbColumn, DuckdbColumnAgg
+
 from duckops.prototypes import (
     PdSeries,
     DatetimeLike,
@@ -47,6 +50,34 @@ def support_no_args(f):
         return f(*args, **kwargs)
     
     return wrapped
+
+
+class NoArgOver(CumlOver):
+
+    @classmethod
+    def func(cls, name: str):
+        sa_func = getattr(sql.func, name)
+        def f(codata, col, *args, **kwargs):
+            #if not isinstance(col, sql.ColumnCollection):
+            #    raise TypeError("Must be called with a plain siuba _")
+
+            #if args or kwargs:
+            #    raise ValueError("This function does not take additional arguments.")
+
+            return cls(sa_func())
+
+        return f
+
+
+def sql_win(dispatcher, win_type: "CustomOverClause | None" = None):
+    if win_type is None:
+        return lambda f: sql_win(f, dispatcher)
+
+    @dispatcher.register(DuckdbColumn)
+    def _duckdb_translate(codata, *args, **kwargs):
+        return win_type.func(dispatcher.__name__)(codata, *args, **kwargs)
+
+    return dispatcher
 
 
 def create_generic(_f):
@@ -198,15 +229,23 @@ def convert(codata: DuckdbColumn, scalar: Interval):
     return scalar.convert(codata)
 
 
-#@dispatch
-#def convert(codata: DuckdbColumn, scalar: NamedArg):
-#    return sql.literal(f"{scalar.name}:={scalar.value}")
+def compile(expr: sql.ClauseElement) -> str:
+    from sqlalchemy.dialects.postgresql import dialect as pg_dialect
 
+    return expr.compile(
+        dialect=pg_dialect(),
+        compile_kwargs = {"literal_binds": True}
+    )
+
+
+@singledispatch
+def _query_call(x, *args, **kwargs):
+    """Execute a query and return the resulting data."""
+    raise NotImplementedError(f"Unsupported type: {type(x)}")
 
 @_query_call.register(IsConcretePandas)
 def _pd_query_call(codata, args, func):
     import duckdb
-    from duckops._core import compile
 
     con = duckdb.connect()
 
@@ -242,7 +281,6 @@ def _pd_query_call(codata, args, func):
 @_query_call.register(IsLiteral)
 def _lit_query_call(codata, args, func, kwargs=None):
     import duckdb
-    from duckops._core import compile
 
     con = duckdb.connect()
 
@@ -261,9 +299,3 @@ def _lit_query_call(codata, args, func, kwargs=None):
     assert len(fetched[0]) == 1
 
     return fetched[0][0]
-
-
-#def sigs_from_paramter_types()
-
-
-#def return getattr(sql.func, func_name)(*args)

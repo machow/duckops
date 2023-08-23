@@ -8,5 +8,3 @@ from .str import *
 from .unknown import *
 from .util import *
 from .win import *
-
-from . import agg

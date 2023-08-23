@@ -5,6 +5,8 @@ from siuba.siu import Symbolic, Call
 from duckops._types import Interval
 from duckops._type_backends import PdSeries
 
+from datetime import datetime, timedelta
+
 import pandas as pd
 import polars as pl
 
@@ -58,4 +60,5 @@ LiteralLike.register(str)
 LiteralLike.register(Interval)
 LiteralLike.register(list)
 LiteralLike.register(type(None))
-
+LiteralLike.register(datetime)
+LiteralLike.register(timedelta)

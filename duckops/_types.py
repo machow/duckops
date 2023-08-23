@@ -1,6 +1,8 @@
 import sqlglot as sg
 
-from ._core import sql_scalar, DuckdbColumn, symbolic_dispatch, support_no_args
+#from ._core import sql_scalar, DuckdbColumn, symbolic_dispatch, support_no_args
+from siuba.siu import symbolic_dispatch
+from siuba.sql.dialects.duckdb import DuckdbColumn
 
 from sqlalchemy import sql
 from sqlalchemy import types as sa_types
@@ -33,11 +35,11 @@ def convert(src, dst):
 # Interval --------------------------------------------------------------------
 
 @symbolic_dispatch(cls=DuckdbColumn)
-def interval(codata: DuckdbColumn, value: "str | None" = None, years=0, months=0, days=0, seconds=0, milliseconds=0, microseconds=0):
+def interval(codata: DuckdbColumn, value: "str | None" = None, years=0, months=0, days=0, hours = 0, minutes = 0, seconds=0, milliseconds=0, microseconds=0):
     if value is not None:
         return SAInterval(value)
     
-    units = {"years", "months", "days", "seconds", "milliseconds", "microseconds"}
+    units = {"years", "months", "days", "hours", "minutes", "seconds", "milliseconds", "microseconds"}
     vals = " ".join(chain(*[(str(v), k) for k, v in locals().items() if k in units if v != 0 ]))
 
     return SAInterval(vals)

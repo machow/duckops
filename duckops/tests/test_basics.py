@@ -14,6 +14,9 @@ from siuba import _, tbl, mutate, collect
 from siuba.siu import strip_symbolic, Symbolic
 from sqlalchemy import create_engine
 
+# TOTEST: 
+#  * pipecall (esp more than 2)
+#  * list conversion
 
 con = duckdb.connect()
 

@@ -131,6 +131,27 @@ def register_agg(f):
 
     return f
 
+# ReplaceFx ----
+from siuba.siu import FormulaArg, strip_symbolic
+from siuba.siu.visitors import CallListener
+
+class ReplaceFx(CallListener):
+    def __init__(self, replacement):
+        self.replacement = replacement
+    
+    def visit(self, node):
+        return super().visit(strip_symbolic(node))
+
+    def exit(self, node):
+        res = super().exit(node)
+        if isinstance(res, FormulaArg):
+            return self.replacement
+
+        return res
+
+
+# Sqlalchemy functions ----
+
 
 from sqlalchemy.sql.expression import FunctionElement
 from sqlalchemy.ext.compiler import compiles
@@ -140,11 +161,103 @@ class assign_equals(FunctionElement):
     inherit_cache = True
 
 
+class lambda_function(FunctionElement):
+    name = 'lambda_function'
+    inherit_cache = True
+
+
+class list_comprehension(FunctionElement):
+    # should be 3 entries: body, iterable, ifs
+    name = "list_comprehension"
+    inherit_cache = True
+
+
+class extract_infix(FunctionElement):
+    name = "extract_infix"
+    inherit_cache = True
+
+
+@singledispatch
+def lam(expr):
+    # TODO: shouldn't need a lam function, the duckdp ops
+    # themselves should handle this
+    raise NotImplementedError()
+
+
+@lam.register
+def _lam_lazy(expr: SymbolLike):
+    new_expr = ReplaceFx(sql.column("x")).enter(strip_symbolic(expr))
+
+    return to_symbol(lam, (new_expr,))
+
+
+@lam.register
+def _lam_duckdb(codata: DuckdbColumn, expr):
+    return lambda_function(sql.column("x"), expr)
+
+
+@create_generic
+def extract(obj, ii):
+    return dispatch_on_trait(extract, (obj, ii))
+
+
+@extract.register
+def _extract_duckdb(codata: DuckdbColumn, obj, ii):
+    return extract_infix(obj, ii)
+
+
+@singledispatch
+def list_comp(body, iterable, *ifs):
+    # TODO ifs should not be *args, but we need to be
+    # careful handling lists of calls in lazy expressions
+    return dispatch_on_trait(list_comp, (body, iterable, *ifs), {})
+
+
+@list_comp.register
+def _list_comp(codata: IsSymbol, body, iterable, *ifs):
+    replacer = ReplaceFx(sql.column("x"))
+    new_body = replacer.visit(body)
+
+    new_ifs = list(map(replacer.visit, ifs))
+
+    return to_symbol(list_comp, (new_body, iterable, *new_ifs))
+
+
+@list_comp.register
+def _list_comp(codata: DuckdbColumn, body, iterable, *ifs):
+    return list_comprehension(body, iterable, *ifs)
+
+
 @compiles(assign_equals)
 def _(element, compiler, **kw):
     lhs, rhs = element.clauses
     proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
     return f"{proc_lhs} := {proc_rhs}"
+
+
+@compiles(extract_infix)
+def _(element, compiler, **kw):
+    lhs, rhs = element.clauses
+    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
+    return f"{proc_lhs}[{proc_rhs}]"
+
+
+@compiles(lambda_function)
+def _(element, compiler, **kw):
+    # lhs should be called parameter, rhs body
+    lhs, rhs = element.clauses
+    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
+    return f"{proc_lhs} -> {proc_rhs}"
+
+
+@compiles(list_comprehension)
+def _(element, compiler, **kw):
+    # lhs should be called parameter, rhs body
+    procs = [compiler.process(el, **kw) for el in element.clauses]
+    body, iterable, *ifs = procs
+
+    str_ifs = "IF ".join([" "] + ifs)
+    return f"[{body} for x in {iterable}{str_ifs}]"
 
 
 def flatten_arg_kwargs(args, kwargs):
@@ -216,6 +329,10 @@ def to_symbol(dispatcher, args):
 
 @dispatch
 def convert(codata: DuckdbColumn, scalar: LiteralLike):
+    return scalar
+
+@dispatch
+def convert(codata: DuckdbColumn, scalar: sql.elements.ClauseElement):
     return scalar
 
 @dispatch

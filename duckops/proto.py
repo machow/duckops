@@ -1,18 +1,23 @@
 from __future__ import annotations
 
 from functools import wraps, singledispatch
-from plum import dispatch
 
 # concrete data ---
+from duckops.core.siuba import (  # noqa: F401
+    ReplaceFx,
+    sql_win,
+    register_agg,
+    flatten_arg_kwargs,
+    NoArgOver,
+    assign_equals,
+    lambda_function,
+    list_comprehension,
+    extract_infix,
+)
 from siuba.siu.dispatchers import NoArgs
+from siuba.sql.dialects.duckdb import DuckdbColumn
 
-# guts ---
 from duckops._types import Interval
-from siuba.sql.dialects.duckdb import DuckdbColumn, DuckdbColumnAgg
-from siuba.sql.translate import CustomOverClause, CumlOver
-
-# from duckops._core import _query_call, DuckdbColumn, DuckdbColumnAgg
-
 from duckops.prototypes import (  # noqa: F401
     PdSeries,
     PlSeries,
@@ -47,39 +52,6 @@ def support_no_args(f):
         return f(*args, **kwargs)
 
     return wrapped
-
-
-class NoArgOver(CumlOver):
-    @classmethod
-    def func(cls, name: str):
-        sa_func = getattr(sql.func, name)
-
-        def f(codata, col, *args, **kwargs):
-            # if not isinstance(col, sql.ColumnCollection):
-            #    raise TypeError("Must be called with a plain siuba _")
-
-            # if args or kwargs:
-            #    raise ValueError("This function does not take additional arguments.")
-
-            return cls(sa_func())
-
-        return f
-
-
-class PandasMethods:
-    def concat(self, *args):
-        return "".join(args)
-
-
-def sql_win(dispatcher, win_type: "CustomOverClause | None" = None):
-    if win_type is None:
-        return lambda f: sql_win(f, dispatcher)
-
-    @dispatcher.register(DuckdbColumn)
-    def _duckdb_translate(codata, *args, **kwargs):
-        return win_type.func(dispatcher.__name__)(codata, *args, **kwargs)
-
-    return dispatcher
 
 
 def create_generic(_f):
@@ -128,64 +100,12 @@ def create_generic(_f):
     return f
 
 
-def register_agg(f):
-    from siuba.sql.translate import AggOver
+def to_symbol(dispatcher, args):
+    from siuba.siu import create_sym_call, FuncArg
 
-    f.register(DuckdbColumn, AggOver.func(f.__name__))
-
-    @f.register
-    def _duckdb_translate_agg(codata: DuckdbColumnAgg, *args):
-        return getattr(sql.func, f.__name__)(*args)
-
-    return f
-
-
-# ReplaceFx ----
-from siuba.siu import FormulaArg, strip_symbolic
-from siuba.siu.visitors import CallListener
-
-
-class ReplaceFx(CallListener):
-    def __init__(self, replacement):
-        self.replacement = replacement
-
-    def visit(self, node):
-        return super().visit(strip_symbolic(node))
-
-    def exit(self, node):
-        res = super().exit(node)
-        if isinstance(res, FormulaArg):
-            return self.replacement
-
-        return res
-
-
-# Sqlalchemy functions ----
-
-
-from sqlalchemy.sql.expression import FunctionElement
-from sqlalchemy.ext.compiler import compiles
-
-
-class assign_equals(FunctionElement):
-    name = "assign_equals"
-    inherit_cache = True
-
-
-class lambda_function(FunctionElement):
-    name = "lambda_function"
-    inherit_cache = True
-
-
-class list_comprehension(FunctionElement):
-    # should be 3 entries: body, iterable, ifs
-    name = "list_comprehension"
-    inherit_cache = True
-
-
-class extract_infix(FunctionElement):
-    name = "extract_infix"
-    inherit_cache = True
+    # TODO: need the dispatch for when it receives the column collection?
+    converted = [convert(arg) if isinstance(arg, LiteralLike) else arg for arg in args]
+    return create_sym_call(FuncArg(dispatcher), *converted)
 
 
 @singledispatch
@@ -197,6 +117,8 @@ def lam(expr):
 
 @lam.register
 def _lam_lazy(expr: SymbolLike):
+    from siuba.siu import strip_symbolic
+
     new_expr = ReplaceFx(sql.column("x")).enter(strip_symbolic(expr))
 
     return to_symbol(lam, (new_expr,))
@@ -209,7 +131,7 @@ def _lam_duckdb(codata: DuckdbColumn, expr):
 
 @create_generic
 def extract(obj, ii):
-    return dispatch_on_trait(extract, (obj, ii))
+    ...
 
 
 @extract.register
@@ -237,42 +159,6 @@ def _list_comp(codata: IsSymbol, body, iterable, *ifs):
 @list_comp.register
 def _list_comp(codata: DuckdbColumn, body, iterable, *ifs):
     return list_comprehension(body, iterable, *ifs)
-
-
-@compiles(assign_equals)
-def _(element, compiler, **kw):
-    lhs, rhs = element.clauses
-    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    return f"{proc_lhs} := {proc_rhs}"
-
-
-@compiles(extract_infix)
-def _(element, compiler, **kw):
-    lhs, rhs = element.clauses
-    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    return f"{proc_lhs}[{proc_rhs}]"
-
-
-@compiles(lambda_function)
-def _(element, compiler, **kw):
-    # lhs should be called parameter, rhs body
-    lhs, rhs = element.clauses
-    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    return f"{proc_lhs} -> {proc_rhs}"
-
-
-@compiles(list_comprehension)
-def _(element, compiler, **kw):
-    # lhs should be called parameter, rhs body
-    procs = [compiler.process(el, **kw) for el in element.clauses]
-    body, iterable, *ifs = procs
-
-    str_ifs = "IF ".join([" "] + ifs)
-    return f"[{body} for x in {iterable}{str_ifs}]"
-
-
-def flatten_arg_kwargs(args, kwargs):
-    return (*args, *kwargs.values())
 
 
 def dispatch_on_trait(dispatcher, args, kwargs):
@@ -314,12 +200,6 @@ def dispatch_style(args):
     elif concretes:
         # TODO: we are storing sets of types, but need instances to dispatch :/
         return data_style.dispatch(list(concretes)[0])(None)
-        # if list(concretes)[0].__module__.startswith("pandas"):
-        #    return IsConcretePandas()
-        # elif list(concretes)[0].__module__.startswith("polars"):
-        #    return IsConcretePolars()
-        # else:
-        #    return IsConcrete()
     elif literals:
         return IsLiteral()
 
@@ -327,37 +207,26 @@ def dispatch_style(args):
     raise TypeError(f"Cannot dispatch on this combination of types: \n{_types}")
 
 
-def to_symbol(dispatcher, args):
-    from siuba.siu import create_sym_call, FuncArg
-
-    # TODO: need the dispatch for when it receives the column collection?
-    converted = [
-        convert(DuckdbColumn(), arg) if isinstance(arg, LiteralLike) else arg
-        for arg in args
-    ]
-    return create_sym_call(FuncArg(dispatcher), *converted)
-
-
-@dispatch
-def convert(codata: DuckdbColumn, scalar: LiteralLike):
+@singledispatch
+def convert(scalar: LiteralLike):
     return scalar
 
 
-@dispatch
-def convert(codata: DuckdbColumn, scalar: sql.elements.ClauseElement):
+@convert.register
+def _(scalar: sql.elements.ClauseElement):
     return scalar
 
 
-@dispatch
-def convert(codata: DuckdbColumn, scalar: list):
-    args = [convert(codata, x) for x in scalar]
+@convert.register
+def _(scalar: list):
+    args = [convert(x) for x in scalar]
     return sql.func.list_pack(*args)
 
 
-@dispatch
-def convert(codata: DuckdbColumn, scalar: Interval):
-    # TODO: refactor
-    return scalar.convert(codata)
+@convert.register
+def _(scalar: Interval):
+    # TODO: convert used to pass codata as first argument
+    return scalar.convert(DuckdbColumn())
 
 
 def compile(expr: sql.ClauseElement) -> str:
@@ -390,7 +259,7 @@ def _pd_query_call(codata, args, func):
             converted.append(sql.column(name))
             n_cols += 1
         else:
-            converted.append(convert(DuckdbColumn(), arg))
+            converted.append(convert(arg))
 
     tmp_df = pd.DataFrame(series_args)  # noqa: F841
 
@@ -426,9 +295,9 @@ def _lit_query_call(codata, args, func, kwargs=None):
 
     con = duckdb.connect()
 
-    converted_args = [convert(DuckdbColumn(), arg) for arg in args]
+    converted_args = [convert(arg) for arg in args]
     if kwargs:
-        converted_kwargs = {k: convert(DuckdbColumn(), v) for k, v in kwargs.items()}
+        converted_kwargs = {k: convert(v) for k, v in kwargs.items()}
     else:
         converted_kwargs = {}
     sql_expr = func(DuckdbColumn(), *converted_args, **converted_kwargs)

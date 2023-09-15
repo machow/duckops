@@ -11,7 +11,7 @@ from sqlalchemy.ext.compiler import compiles
 from functools import singledispatch, singledispatchmethod
 from itertools import chain
 
-from . import _type_backends as be
+from .core import _type_backends as be
 
 
 # Hack to make data visitable ----

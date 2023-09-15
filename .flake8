@@ -1,9 +1,14 @@
+[flake8]
 exclude = docs
 max-line-length = 90
 ignore =
     # line too long
     E501
+    # module level import not at top of file
+    E402
     # line before binary operator
     W503
     # redefinition of unused function name
     F811
+    # import with star
+    F403

@@ -23,7 +23,7 @@ dependencies = [
   "duckdb_engine",
 
   # duckdb currently errors on pandas 2.1.0, due
-  # to a missing arrow module. This is fixed in 
+  # to a missing arrow module. This is fixed in
   # duckdb v0.9.0, but not yet released.
   "pandas<2.1.0",
 

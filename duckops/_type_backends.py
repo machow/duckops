@@ -51,15 +51,28 @@ if TYPE_CHECKING:
 
     PdSeries = pd.Series
 else:
-    class PdFrame(AbstractBackend): pass
-    class PdSeries(AbstractBackend): pass
+
+    class PdFrame(AbstractBackend):
+        pass
+
+    class PdSeries(AbstractBackend):
+        pass
 
     PdSeries.register_backend("pandas", "Series")
     PdFrame.register_backend("pandas", "DataFrame")
 
-class PlObject(AbstractBackend): pass
-class PlSeries(AbstractBackend): pass
-class PdArray(AbstractBackend): pass
+
+class PlObject(AbstractBackend):
+    pass
+
+
+class PlSeries(AbstractBackend):
+    pass
+
+
+class PdArray(AbstractBackend):
+    pass
+
 
 PlObject.register_backend("polars", "DataFrame")
 PlObject.register_backend("polars", "Series")

@@ -1,22 +1,19 @@
 from __future__ import annotations
 
-import pandas as pd
-
 from functools import wraps, singledispatch
 from plum import dispatch
-from typing import Union
 
 # concrete data ---
-from siuba.siu import Symbolic, Call
 from siuba.siu.dispatchers import NoArgs
 
 # guts ---
 from duckops._types import Interval
 from siuba.sql.dialects.duckdb import DuckdbColumn, DuckdbColumnAgg
-from siuba.sql.translate import CustomOverClause, RankOver, CumlOver
-#from duckops._core import _query_call, DuckdbColumn, DuckdbColumnAgg
+from siuba.sql.translate import CustomOverClause, CumlOver
 
-from duckops.prototypes import (
+# from duckops._core import _query_call, DuckdbColumn, DuckdbColumnAgg
+
+from duckops.prototypes import (  # noqa: F401
     PdSeries,
     PlSeries,
     DatetimeLike,
@@ -27,14 +24,11 @@ from duckops.prototypes import (
     IsConcretePandas,
     IsConcretePolars,
     IsSymbol,
-    LiteralLike,
     ConcreteLike,
     SymbolLike,
-    data_style
+    data_style,
 )
 from sqlalchemy import sql
-
-from typing import TYPE_CHECKING
 
 
 # Pre-processing steps ----
@@ -42,37 +36,40 @@ from typing import TYPE_CHECKING
 #   * ConcreteLike dispatch: separate literals and concretes
 #   * Handle homogeneous tuples as LiteralLike list
 
+
 def support_no_args(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         # Case 1: no arguments -----
         if not len(args):
             return f(NoArgs(), *args, **kwargs)
-        
+
         return f(*args, **kwargs)
-    
+
     return wrapped
 
 
 class NoArgOver(CumlOver):
-
     @classmethod
     def func(cls, name: str):
         sa_func = getattr(sql.func, name)
+
         def f(codata, col, *args, **kwargs):
-            #if not isinstance(col, sql.ColumnCollection):
+            # if not isinstance(col, sql.ColumnCollection):
             #    raise TypeError("Must be called with a plain siuba _")
 
-            #if args or kwargs:
+            # if args or kwargs:
             #    raise ValueError("This function does not take additional arguments.")
 
             return cls(sa_func())
 
         return f
 
+
 class PandasMethods:
     def concat(self, *args):
         return "".join(args)
+
 
 def sql_win(dispatcher, win_type: "CustomOverClause | None" = None):
     if win_type is None:
@@ -91,7 +88,7 @@ def create_generic(_f):
     @wraps(_f)
     def f(*args, **kwargs):
         return dispatch_on_trait(f, args, kwargs)
-    
+
     @f.register
     def _no_args(x: NoArgs, *args, **kwargs):
         # for functions like struct_pack that are all kwargs
@@ -100,7 +97,7 @@ def create_generic(_f):
     @f.register
     def _literal(codata: IsLiteral, *args, **kwargs):
         return _query_call(codata, args, f, kwargs)
-    
+
     @f.register
     def _concrete(codata: IsConcrete, *args):
         raise NotImplementedError()
@@ -125,7 +122,7 @@ def create_generic(_f):
         # TODO: grabbing __name__ inside this func feels a bit hacky
         named_args = [assign_equals(sql.text(k), v) for k, v in kwargs.items()]
         return getattr(sql.func, f.__name__)(*args, *named_args)
-    
+
     # @_core.sql_agg("arg_max", _tr.AggOver)
 
     return f
@@ -142,14 +139,16 @@ def register_agg(f):
 
     return f
 
+
 # ReplaceFx ----
 from siuba.siu import FormulaArg, strip_symbolic
 from siuba.siu.visitors import CallListener
 
+
 class ReplaceFx(CallListener):
     def __init__(self, replacement):
         self.replacement = replacement
-    
+
     def visit(self, node):
         return super().visit(strip_symbolic(node))
 
@@ -167,13 +166,14 @@ class ReplaceFx(CallListener):
 from sqlalchemy.sql.expression import FunctionElement
 from sqlalchemy.ext.compiler import compiles
 
+
 class assign_equals(FunctionElement):
-    name = 'assign_equals'
+    name = "assign_equals"
     inherit_cache = True
 
 
 class lambda_function(FunctionElement):
-    name = 'lambda_function'
+    name = "lambda_function"
     inherit_cache = True
 
 
@@ -279,7 +279,6 @@ def dispatch_on_trait(dispatcher, args, kwargs):
     flat_args = flatten_arg_kwargs(args, kwargs)
     trait = dispatch_style(flat_args)
 
-
     # TODO: check if signature is in registry, and fail if not. Otherwise,
     # we will likely infinitely recurse
     return dispatcher(trait, *args, **kwargs)
@@ -301,8 +300,7 @@ def dispatch_style(args):
     if len(concretes) > 1:
         _types = "\n  *".join(map(str, concretes))
         raise NotImplementedError(
-            "Mixing concrete types not allowed."
-            f" Detected these concretes:\n{_types}"
+            "Mixing concrete types not allowed." f" Detected these concretes:\n{_types}"
         )
 
     # trait for dispatch ----
@@ -316,23 +314,21 @@ def dispatch_style(args):
     elif concretes:
         # TODO: we are storing sets of types, but need instances to dispatch :/
         return data_style.dispatch(list(concretes)[0])(None)
-        #if list(concretes)[0].__module__.startswith("pandas"):
+        # if list(concretes)[0].__module__.startswith("pandas"):
         #    return IsConcretePandas()
-        #elif list(concretes)[0].__module__.startswith("polars"):
+        # elif list(concretes)[0].__module__.startswith("polars"):
         #    return IsConcretePolars()
-        #else:
+        # else:
         #    return IsConcrete()
     elif literals:
         return IsLiteral()
-  
+
     _types = "\n  * ".join([""] + [type(arg).__name__ for arg in args])
     raise TypeError(f"Cannot dispatch on this combination of types: \n{_types}")
 
 
-
 def to_symbol(dispatcher, args):
-    from siuba import _
-    from siuba.siu import create_sym_call, FuncArg, strip_symbolic
+    from siuba.siu import create_sym_call, FuncArg
 
     # TODO: need the dispatch for when it receives the column collection?
     converted = [
@@ -341,18 +337,22 @@ def to_symbol(dispatcher, args):
     ]
     return create_sym_call(FuncArg(dispatcher), *converted)
 
+
 @dispatch
 def convert(codata: DuckdbColumn, scalar: LiteralLike):
     return scalar
+
 
 @dispatch
 def convert(codata: DuckdbColumn, scalar: sql.elements.ClauseElement):
     return scalar
 
+
 @dispatch
 def convert(codata: DuckdbColumn, scalar: list):
     args = [convert(codata, x) for x in scalar]
     return sql.func.list_pack(*args)
+
 
 @dispatch
 def convert(codata: DuckdbColumn, scalar: Interval):
@@ -363,10 +363,7 @@ def convert(codata: DuckdbColumn, scalar: Interval):
 def compile(expr: sql.ClauseElement) -> str:
     from sqlalchemy.dialects.postgresql import dialect as pg_dialect
 
-    return expr.compile(
-        dialect=pg_dialect(),
-        compile_kwargs = {"literal_binds": True}
-    )
+    return expr.compile(dialect=pg_dialect(), compile_kwargs={"literal_binds": True})
 
 
 @singledispatch
@@ -374,8 +371,10 @@ def _query_call(x, *args, **kwargs):
     """Execute a query and return the resulting data."""
     raise NotImplementedError(f"Unsupported type: {type(x)}")
 
+
 @_query_call.register(IsConcretePandas)
 def _pd_query_call(codata, args, func):
+    import pandas as pd
     import duckdb
 
     con = duckdb.connect()
@@ -393,7 +392,7 @@ def _pd_query_call(codata, args, func):
         else:
             converted.append(convert(DuckdbColumn(), arg))
 
-    tmp_df = pd.DataFrame(series_args)
+    tmp_df = pd.DataFrame(series_args)  # noqa: F841
 
     sql_expr = func(DuckdbColumn(), *converted)
     col_query = compile(sql_expr)
@@ -408,6 +407,7 @@ def _pd_query_call(codata, args, func):
 
     return res_col
 
+
 @_query_call.register(IsConcretePolars)
 def _pl_query_call(codata, args, func):
     # TODO: could use databackend
@@ -418,7 +418,6 @@ def _pl_query_call(codata, args, func):
 
     pandas_result = _pd_query_call(codata, new_args, func)
     return pl.Series(pandas_result)
-
 
 
 @_query_call.register(IsLiteral)

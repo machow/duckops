@@ -34,19 +34,41 @@ NumberLike = Union[int, float]
 
 # Traits ----
 
-class IsConcrete(ABC): ...
-class IsSymbol(ABC): ...
-class IsLiteral(ABC): ...
+
+class IsConcrete(ABC):
+    ...
 
 
-class IsConcretePandas(IsConcrete): ...
-class IsConcretePolars(IsConcrete): ...
+class IsSymbol(ABC):
+    ...
 
-class IsSymbolSiuba(IsSymbol): ...
 
-class ConcreteLike(ABC): ...
-class SymbolLike(ABC): ...
-class LiteralLike(ABC): ...
+class IsLiteral(ABC):
+    ...
+
+
+class IsConcretePandas(IsConcrete):
+    ...
+
+
+class IsConcretePolars(IsConcrete):
+    ...
+
+
+class IsSymbolSiuba(IsSymbol):
+    ...
+
+
+class ConcreteLike(ABC):
+    ...
+
+
+class SymbolLike(ABC):
+    ...
+
+
+class LiteralLike(ABC):
+    ...
 
 
 ConcreteLike.register(PdSeries)
@@ -68,15 +90,21 @@ LiteralLike.register(timedelta)
 def data_style(arg):
     raise NotImplementedError()
 
-@data_style.register
-def _(arg: PdSeries): return IsConcretePandas()
 
 @data_style.register
-def _(arg: PlSeries): return IsConcretePolars()
+def _(arg: PdSeries):
+    return IsConcretePandas()
+
+
+@data_style.register
+def _(arg: PlSeries):
+    return IsConcretePolars()
 
 
 # TODO: should be IsSymbolSiuba
 
+
 @data_style.register(Symbolic)
 @data_style.register(Call)
-def _(arg): return IsSymbolSiuba()
+def _(arg):
+    return IsSymbolSiuba()

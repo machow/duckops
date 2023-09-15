@@ -10,14 +10,14 @@ def query_to_tbl(engine, query: str) -> LazyTbl:
     """
 
     q = engine.execute(sql.text(full_query))
-    
+
     columns = [sql.column(k) for k in q.keys()]
     text_as_from = sql.text(query).columns(*columns).alias()
 
     return LazyTbl(engine, text_as_from)
 
 
-def tbl_empty(engine = None) -> LazyTbl:
+def tbl_empty(engine=None) -> LazyTbl:
     if engine is None:
         engine = create_engine("duckdb:///:memory:")
 

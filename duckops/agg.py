@@ -1,1 +1,1 @@
-from duckops._functions.agg import *
+from duckops._functions.agg import *  # noqa

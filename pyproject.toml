@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["duckops"]
+namespaces = true
+
+[project]
+name = "duckops"
+authors = [
+  {name = "Michael Chow", email = "mc_al_github@fastmail.com"}
+]
+description = "A utility package for pushing around data"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3"
+]
+keywords = ["data"]
+dependencies = [
+  "duckdb",
+  "duckdb_engine",
+  "siuba",
+  "plum-dispatch"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-dotenv",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["duckops"]
+
+[tool.setuptools_scm]

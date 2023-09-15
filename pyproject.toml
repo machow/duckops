@@ -32,7 +32,9 @@ dynamic = ["version"]
 dev = [
   "pytest",
   "pytest-dotenv",
+  "polars",
 ]
+
 
 [tool.pytest.ini_options]
 testpaths = ["duckops"]

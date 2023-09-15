@@ -8,8 +8,6 @@ from duckops._type_backends import PdSeries, PlSeries
 
 from datetime import datetime, timedelta
 
-import pandas as pd
-import polars as pl
 
 AInvalid = Any
 ABool = Any
@@ -51,8 +49,8 @@ class SymbolLike(ABC): ...
 class LiteralLike(ABC): ...
 
 
-ConcreteLike.register(pd.Series)
-ConcreteLike.register(pl.Series)
+ConcreteLike.register(PdSeries)
+ConcreteLike.register(PlSeries)
 SymbolLike.register(Symbolic)
 SymbolLike.register(Call)
 LiteralLike.register(int)

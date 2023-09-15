@@ -1,9 +1,10 @@
 from abc import ABC
 from typing import Any, Union
+from functools import singledispatch
 
 from siuba.siu import Symbolic, Call
 from duckops._types import Interval
-from duckops._type_backends import PdSeries
+from duckops._type_backends import PdSeries, PlSeries
 
 from datetime import datetime, timedelta
 
@@ -43,6 +44,7 @@ class IsLiteral(ABC): ...
 class IsConcretePandas(IsConcrete): ...
 class IsConcretePolars(IsConcrete): ...
 
+class IsSymbolSiuba(IsSymbol): ...
 
 class ConcreteLike(ABC): ...
 class SymbolLike(ABC): ...
@@ -62,3 +64,21 @@ LiteralLike.register(list)
 LiteralLike.register(type(None))
 LiteralLike.register(datetime)
 LiteralLike.register(timedelta)
+
+
+@singledispatch
+def data_style(arg):
+    raise NotImplementedError()
+
+@data_style.register
+def _(arg: PdSeries): return IsConcretePandas()
+
+@data_style.register
+def _(arg: PlSeries): return IsConcretePolars()
+
+
+# TODO: should be IsSymbolSiuba
+
+@data_style.register(Symbolic)
+@data_style.register(Call)
+def _(arg): return IsSymbolSiuba()

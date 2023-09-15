@@ -18,6 +18,7 @@ from siuba.sql.translate import CustomOverClause, RankOver, CumlOver
 
 from duckops.prototypes import (
     PdSeries,
+    PlSeries,
     DatetimeLike,
     StringLike,
     LiteralLike,
@@ -28,7 +29,8 @@ from duckops.prototypes import (
     IsSymbol,
     LiteralLike,
     ConcreteLike,
-    SymbolLike
+    SymbolLike,
+    data_style
 )
 from sqlalchemy import sql
 
@@ -68,6 +70,9 @@ class NoArgOver(CumlOver):
 
         return f
 
+class PandasMethods:
+    def concat(self, *args):
+        return "".join(args)
 
 def sql_win(dispatcher, win_type: "CustomOverClause | None" = None):
     if win_type is None:
@@ -81,9 +86,6 @@ def sql_win(dispatcher, win_type: "CustomOverClause | None" = None):
 
 
 def create_generic(_f):
-    if TYPE_CHECKING:
-        return _f
-
     @support_no_args
     @singledispatch
     @wraps(_f)
@@ -98,9 +100,18 @@ def create_generic(_f):
     @f.register
     def _literal(codata: IsLiteral, *args, **kwargs):
         return _query_call(codata, args, f, kwargs)
+    
+    @f.register
+    def _concrete(codata: IsConcrete, *args):
+        raise NotImplementedError()
 
     @f.register
-    def _concrete(codata: IsConcretePandas, *args):
+    def _concrete_pd(codata: IsConcretePandas, *args):
+        # TODO: support kwargs here
+        return _query_call(codata, args, f)
+
+    @f.register
+    def _concrete_pl(codata: IsConcretePolars, *args):
         # TODO: support kwargs here
         return _query_call(codata, args, f)
 
@@ -300,20 +311,23 @@ def dispatch_style(args):
     elif symbols and concretes:
         raise NotImplementedError()
     elif symbols:
-        return IsSymbol()
+        # TODO: we are storing sets of types, but need instances to dispatch :/
+        return data_style.dispatch(list(symbols)[0])(None)
     elif concretes:
-        # TODO: use databackend
-        if list(concretes)[0].__module__.startswith("pandas"):
-            return IsConcretePandas()
-        elif list(concretes)[0].__module__.startswith("polars"):
-            return IsConcretePolars()
-        else:
-            return IsConcrete()
+        # TODO: we are storing sets of types, but need instances to dispatch :/
+        return data_style.dispatch(list(concretes)[0])(None)
+        #if list(concretes)[0].__module__.startswith("pandas"):
+        #    return IsConcretePandas()
+        #elif list(concretes)[0].__module__.startswith("polars"):
+        #    return IsConcretePolars()
+        #else:
+        #    return IsConcrete()
     elif literals:
         return IsLiteral()
   
     _types = "\n  * ".join([""] + [type(arg).__name__ for arg in args])
     raise TypeError(f"Cannot dispatch on this combination of types: \n{_types}")
+
 
 
 def to_symbol(dispatcher, args):
@@ -393,6 +407,18 @@ def _pd_query_call(codata, args, func):
     res_col.name = None
 
     return res_col
+
+@_query_call.register(IsConcretePolars)
+def _pl_query_call(codata, args, func):
+    # TODO: could use databackend
+    import polars as pl
+
+    # TODO: just using pandas for now
+    new_args = [x.to_pandas() if isinstance(x, pl.Series) else x for x in args]
+
+    pandas_result = _pd_query_call(codata, new_args, func)
+    return pl.Series(pandas_result)
+
 
 
 @_query_call.register(IsLiteral)

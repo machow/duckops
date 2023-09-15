@@ -58,8 +58,10 @@ else:
     PdFrame.register_backend("pandas", "DataFrame")
 
 class PlObject(AbstractBackend): pass
+class PlSeries(AbstractBackend): pass
 class PdArray(AbstractBackend): pass
 
 PlObject.register_backend("polars", "DataFrame")
 PlObject.register_backend("polars", "Series")
+PlSeries.register_backend("polars", "Series")
 PdArray.register_backend("pandas.api.extensions", "ExtensionArray")

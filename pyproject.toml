@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["duckops"]
+namespaces = true
+
+[project]
+name = "duckops"
+authors = [
+  {name = "Michael Chow", email = "mc_al_github@fastmail.com"}
+]
+description = "A utility package for pushing around data"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3"
+]
+keywords = ["data"]
+dependencies = [
+  "duckdb",
+  "duckdb_engine",
+
+  # duckdb currently errors on pandas 2.1.0, due
+  # to a missing arrow module. This is fixed in
+  # duckdb v0.9.0, but not yet released.
+  "pandas<2.1.0",
+
+  "plum-dispatch",
+  "siuba",
+  "sqlalchemy<=1.4.47",
+  "sqlglot",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-dotenv",
+  "polars",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["duckops"]
+
+[tool.setuptools_scm]

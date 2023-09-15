@@ -11,10 +11,10 @@ from duckops.nested import struct_pack
 from duckops.win import row_number
 
 from siuba import _, tbl, mutate, collect
-from siuba.siu import strip_symbolic, Symbolic
+from siuba.siu import Symbolic
 from sqlalchemy import create_engine
 
-# TOTEST: 
+# TOTEST:
 #  * pipecall (esp more than 2)
 #  * list conversion
 
@@ -22,12 +22,14 @@ con = duckdb.connect()
 
 engine = create_engine("duckdb:///:memory:")
 
-df = pd.DataFrame({
-    "part": ["year", "month"],
-    "date": pd.to_datetime(["2022-01-01", "2023-02-03"]),
-    "x": ["a", "b"],
-    "y": ["c", "d"]
-})
+df = pd.DataFrame(
+    {
+        "part": ["year", "month"],
+        "date": pd.to_datetime(["2022-01-01", "2023-02-03"]),
+        "x": ["a", "b"],
+        "y": ["c", "d"],
+    }
+)
 tbl_df = tbl(engine, "df", df)
 
 
@@ -40,12 +42,15 @@ def assert_is_equal(res, dst):
         assert res == dst
 
 
-@pytest.mark.parametrize("x, y, dst", [
-    (df["part"], df["date"], pd.Series([2022, 2])),
-    (df["part"], Interval(3, "years"), pd.Series([3, 0])),
-    ("year", df["date"], pd.Series([2022, 2023])),
-    ("year", Interval(3, "years"), 3)
-])
+@pytest.mark.parametrize(
+    "x, y, dst",
+    [
+        (df["part"], df["date"], pd.Series([2022, 2])),
+        (df["part"], Interval(3, "years"), pd.Series([3, 0])),
+        ("year", df["date"], pd.Series([2022, 2023])),
+        ("year", Interval(3, "years"), 3),
+    ],
+)
 def test_date_part(x, y, dst):
     res = date_part(x, y)
 
@@ -53,10 +58,9 @@ def test_date_part(x, y, dst):
     assert_is_equal(res, dst)
 
 
-@pytest.mark.parametrize("x, dst", [
-    ("a", "a"),
-    (pd.Series(["a", "x"]), pd.Series(["a", "x"]))
-])
+@pytest.mark.parametrize(
+    "x, dst", [("a", "a"), (pd.Series(["a", "x"]), pd.Series(["a", "x"]))]
+)
 def test_func_varargs_1(x, dst):
     res = concat(x)
 
@@ -64,11 +68,14 @@ def test_func_varargs_1(x, dst):
     assert_is_equal(x, dst)
 
 
-@pytest.mark.parametrize("x,y,z,dst", [
-    ("a", "-", "b", "a-b"),
-    (pd.Series(["a", "x"]), "-", pd.Series(["b", "c"]), pd.Series(["a-b", "x-c"])),
-    ("-", pd.Series(["a", "x"]), pd.Series(["b", "c"]), pd.Series(["-ab", "-xc"])),
-])
+@pytest.mark.parametrize(
+    "x,y,z,dst",
+    [
+        ("a", "-", "b", "a-b"),
+        (pd.Series(["a", "x"]), "-", pd.Series(["b", "c"]), pd.Series(["a-b", "x-c"])),
+        ("-", pd.Series(["a", "x"]), pd.Series(["b", "c"]), pd.Series(["-ab", "-xc"])),
+    ],
+)
 def test_func_varargs_3(x, y, z, dst):
     res = concat(x, y, z)
 
@@ -77,9 +84,9 @@ def test_func_varargs_3(x, y, z, dst):
 
 
 def test_assign_equal_syntax():
-    res = struct_pack(a = 1, b = "x", c = Interval(2, "days"))
+    res = struct_pack(a=1, b="x", c=Interval(2, "days"))
 
-    assert res == {'a': 1, 'b': 'x', 'c': datetime.timedelta(days=2)}
+    assert res == {"a": 1, "b": "x", "c": datetime.timedelta(days=2)}
 
 
 def test_func_argless():
@@ -100,7 +107,7 @@ def test_func_win():
 
 
 def test_func_siuba_lazy():
-    res1 = tbl_df >> mutate(res = date_part(_.part, _.date)) >> collect()
-    res2 = df >> mutate(res = date_part(_.part, _.date))
+    res1 = tbl_df >> mutate(res=date_part(_.part, _.date)) >> collect()
+    res2 = df >> mutate(res=date_part(_.part, _.date))
 
     assert_is_equal(res1, res2)

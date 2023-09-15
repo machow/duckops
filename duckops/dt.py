@@ -1,1 +1,1 @@
-from duckops._functions.dt import *
+from duckops._functions.dt import *  # noqa: F401

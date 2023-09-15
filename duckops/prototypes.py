@@ -8,8 +8,6 @@ from duckops._type_backends import PdSeries, PlSeries
 
 from datetime import datetime, timedelta
 
-import pandas as pd
-import polars as pl
 
 AInvalid = Any
 ABool = Any
@@ -36,23 +34,45 @@ NumberLike = Union[int, float]
 
 # Traits ----
 
-class IsConcrete(ABC): ...
-class IsSymbol(ABC): ...
-class IsLiteral(ABC): ...
+
+class IsConcrete(ABC):
+    ...
 
 
-class IsConcretePandas(IsConcrete): ...
-class IsConcretePolars(IsConcrete): ...
-
-class IsSymbolSiuba(IsSymbol): ...
-
-class ConcreteLike(ABC): ...
-class SymbolLike(ABC): ...
-class LiteralLike(ABC): ...
+class IsSymbol(ABC):
+    ...
 
 
-ConcreteLike.register(pd.Series)
-ConcreteLike.register(pl.Series)
+class IsLiteral(ABC):
+    ...
+
+
+class IsConcretePandas(IsConcrete):
+    ...
+
+
+class IsConcretePolars(IsConcrete):
+    ...
+
+
+class IsSymbolSiuba(IsSymbol):
+    ...
+
+
+class ConcreteLike(ABC):
+    ...
+
+
+class SymbolLike(ABC):
+    ...
+
+
+class LiteralLike(ABC):
+    ...
+
+
+ConcreteLike.register(PdSeries)
+ConcreteLike.register(PlSeries)
 SymbolLike.register(Symbolic)
 SymbolLike.register(Call)
 LiteralLike.register(int)
@@ -70,15 +90,21 @@ LiteralLike.register(timedelta)
 def data_style(arg):
     raise NotImplementedError()
 
-@data_style.register
-def _(arg: PdSeries): return IsConcretePandas()
 
 @data_style.register
-def _(arg: PlSeries): return IsConcretePolars()
+def _(arg: PdSeries):
+    return IsConcretePandas()
+
+
+@data_style.register
+def _(arg: PlSeries):
+    return IsConcretePolars()
 
 
 # TODO: should be IsSymbolSiuba
 
+
 @data_style.register(Symbolic)
 @data_style.register(Call)
-def _(arg): return IsSymbolSiuba()
+def _(arg):
+    return IsSymbolSiuba()

@@ -23,6 +23,7 @@ dependencies = [
   "duckdb_engine",
   "plum-dispatch",
   "siuba",
+  "sqlalchemy<=1.4.47",
   "sqlglot",
 ]
 dynamic = ["version"]

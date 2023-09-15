@@ -21,8 +21,9 @@ keywords = ["data"]
 dependencies = [
   "duckdb",
   "duckdb_engine",
+  "plum-dispatch",
   "siuba",
-  "plum-dispatch"
+  "sqlglot",
 ]
 dynamic = ["version"]
 

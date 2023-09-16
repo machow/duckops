@@ -101,9 +101,6 @@ def _(arg: PlSeries):
     return IsConcretePolars()
 
 
-# TODO: should be IsSymbolSiuba
-
-
 @data_style.register(Symbolic)
 @data_style.register(Call)
 def _(arg):

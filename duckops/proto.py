@@ -195,10 +195,11 @@ def dispatch_style(args):
     elif symbols and concretes:
         raise NotImplementedError()
     elif symbols:
-        # TODO: we are storing sets of types, but need instances to dispatch :/
+        # TODO: we have sets of types, but singledispatch only works with instances,
+        # so we have to manually call its dispatch method (which takes types).
         return data_style.dispatch(list(symbols)[0])(None)
     elif concretes:
-        # TODO: we are storing sets of types, but need instances to dispatch :/
+        # TODO: same as above :/
         return data_style.dispatch(list(concretes)[0])(None)
     elif literals:
         return IsLiteral()

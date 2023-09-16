@@ -17,7 +17,8 @@ from duckops.core.siuba import (  # noqa: F401
 from siuba.siu.dispatchers import NoArgs
 from siuba.sql.dialects.duckdb import DuckdbColumn
 
-from duckops._types import Interval
+from duckops.core.convert import convert
+from duckops.core.query_call import query_call
 from duckops.prototypes import (  # noqa: F401
     PdSeries,
     PlSeries,
@@ -68,7 +69,7 @@ def create_generic(_f):
 
     @f.register
     def _literal(codata: IsLiteral, *args, **kwargs):
-        return _query_call(codata, args, f, kwargs)
+        return query_call(codata, args, f, kwargs)
 
     @f.register
     def _concrete(codata: IsConcrete, *args):
@@ -77,12 +78,12 @@ def create_generic(_f):
     @f.register
     def _concrete_pd(codata: IsConcretePandas, *args):
         # TODO: support kwargs here
-        return _query_call(codata, args, f)
+        return query_call(codata, args, f)
 
     @f.register
     def _concrete_pl(codata: IsConcretePolars, *args):
         # TODO: support kwargs here
-        return _query_call(codata, args, f)
+        return query_call(codata, args, f)
 
     @f.register
     def _symbol(codata: IsSymbol, *args):
@@ -206,108 +207,3 @@ def dispatch_style(args):
 
     _types = "\n  * ".join([""] + [type(arg).__name__ for arg in args])
     raise TypeError(f"Cannot dispatch on this combination of types: \n{_types}")
-
-
-@singledispatch
-def convert(scalar: LiteralLike):
-    return scalar
-
-
-@convert.register
-def _(scalar: sql.elements.ClauseElement):
-    return scalar
-
-
-@convert.register
-def _(scalar: list):
-    args = [convert(x) for x in scalar]
-    return sql.func.list_pack(*args)
-
-
-@convert.register
-def _(scalar: Interval):
-    # TODO: convert used to pass codata as first argument
-    return scalar.convert(DuckdbColumn())
-
-
-def compile(expr: sql.ClauseElement) -> str:
-    from sqlalchemy.dialects.postgresql import dialect as pg_dialect
-
-    return expr.compile(dialect=pg_dialect(), compile_kwargs={"literal_binds": True})
-
-
-@singledispatch
-def _query_call(x, *args, **kwargs):
-    """Execute a query and return the resulting data."""
-    raise NotImplementedError(f"Unsupported type: {type(x)}")
-
-
-@_query_call.register(IsConcretePandas)
-def _pd_query_call(codata, args, func):
-    import pandas as pd
-    import duckdb
-
-    con = duckdb.connect()
-
-    converted = []
-    series_args = {}
-    n_cols = 0
-
-    for arg in args:
-        if isinstance(arg, PdSeries):
-            name = f"col_{n_cols}"
-            series_args[name] = arg
-            converted.append(sql.column(name))
-            n_cols += 1
-        else:
-            converted.append(convert(arg))
-
-    tmp_df = pd.DataFrame(series_args)  # noqa: F841
-
-    sql_expr = func(DuckdbColumn(), *converted)
-    col_query = compile(sql_expr)
-
-    query = f"SELECT {col_query} AS __result__ FROM tmp_df"
-
-    # execute query ----
-    res_df = con.execute(query).df()
-
-    res_col = res_df["__result__"]
-    res_col.name = None
-
-    return res_col
-
-
-@_query_call.register(IsConcretePolars)
-def _pl_query_call(codata, args, func):
-    # TODO: could use databackend
-    import polars as pl
-
-    # TODO: just using pandas for now
-    new_args = [x.to_pandas() if isinstance(x, pl.Series) else x for x in args]
-
-    pandas_result = _pd_query_call(codata, new_args, func)
-    return pl.Series(pandas_result)
-
-
-@_query_call.register(IsLiteral)
-def _lit_query_call(codata, args, func, kwargs=None):
-    import duckdb
-
-    con = duckdb.connect()
-
-    converted_args = [convert(arg) for arg in args]
-    if kwargs:
-        converted_kwargs = {k: convert(v) for k, v in kwargs.items()}
-    else:
-        converted_kwargs = {}
-    sql_expr = func(DuckdbColumn(), *converted_args, **converted_kwargs)
-
-    compiled = compile(sql_expr)
-
-    res = con.execute(f"SELECT {compiled} AS _tmp_res_")
-    fetched = res.fetchall()
-    assert len(fetched) == 1
-    assert len(fetched[0]) == 1
-
-    return fetched[0][0]

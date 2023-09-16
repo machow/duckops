@@ -48,33 +48,27 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import pandas as pd
+    import polars as pl
+    import siuba as sb
 
     PdSeries = pd.Series
+    PlSeries = pl.Series
+    SbLazy = sb.Symbolic
 else:
 
-    class PdFrame(AbstractBackend):
-        pass
-
     class PdSeries(AbstractBackend):
-        pass
+        ...
+
+    class PlSeries(AbstractBackend):
+        ...
+
+    class PdArray(AbstractBackend):
+        ...
+
+    class SbLazy(AbstractBackend):
+        ...
 
     PdSeries.register_backend("pandas", "Series")
-    PdFrame.register_backend("pandas", "DataFrame")
-
-
-class PlObject(AbstractBackend):
-    pass
-
-
-class PlSeries(AbstractBackend):
-    pass
-
-
-class PdArray(AbstractBackend):
-    pass
-
-
-PlObject.register_backend("polars", "DataFrame")
-PlObject.register_backend("polars", "Series")
-PlSeries.register_backend("polars", "Series")
-PdArray.register_backend("pandas.api.extensions", "ExtensionArray")
+    PlSeries.register_backend("polars", "Series")
+    SbLazy.register_backend("siuba.siu", "Symbolic")
+    SbLazy.register_backend("siuba.siu", "Call")

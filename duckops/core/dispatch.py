@@ -11,7 +11,7 @@ from duckops.core.sql import (
 )
 
 from duckops.core.query_call import query_call
-from duckops.prototypes import (  # noqa: F401
+from duckops.core.data_style import (  # noqa: F401
     IsUnknown,
     IsLiteral,
     IsConcrete,

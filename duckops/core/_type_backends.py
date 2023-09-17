@@ -50,10 +50,12 @@ if TYPE_CHECKING:
     import pandas as pd
     import polars as pl
     import siuba as sb
+    import sqlalchemy as sqla
 
     PdSeries = pd.Series
     PlSeries = pl.Series
     SbLazy = sb.Symbolic
+    SqlaClauseElement = sqla.sql.ClauseElement
 else:
 
     class PdSeries(AbstractBackend):
@@ -68,7 +70,11 @@ else:
     class SbLazy(AbstractBackend):
         ...
 
+    class SqlaClauseElement(AbstractBackend):
+        ...
+
     PdSeries.register_backend("pandas", "Series")
     PlSeries.register_backend("polars", "Series")
     SbLazy.register_backend("siuba.siu", "Symbolic")
     SbLazy.register_backend("siuba.siu", "Call")
+    SqlaClauseElement.register_backend("sqlalchemy.sql", "ClauseElement")

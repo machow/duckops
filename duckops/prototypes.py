@@ -4,7 +4,7 @@ from functools import singledispatch
 
 from siuba.siu import Symbolic, Call
 from duckops._types import Interval
-from duckops.core._type_backends import PdSeries, PlSeries
+from duckops.core._type_backends import PdSeries, PlSeries, SqlaClauseElement
 
 from datetime import datetime, timedelta
 
@@ -36,6 +36,10 @@ NumberLike = Union[int, float]
 
 
 class IsConcrete(ABC):
+    ...
+
+
+class IsUnknown(ABC):
     ...
 
 
@@ -75,6 +79,7 @@ ConcreteLike.register(PdSeries)
 ConcreteLike.register(PlSeries)
 SymbolLike.register(Symbolic)
 SymbolLike.register(Call)
+LiteralLike.register(SqlaClauseElement)
 LiteralLike.register(int)
 LiteralLike.register(float)
 LiteralLike.register(bool)
@@ -88,7 +93,12 @@ LiteralLike.register(timedelta)
 
 @singledispatch
 def data_style(arg):
-    raise NotImplementedError()
+    return IsUnknown()
+
+
+@data_style.register
+def _(arg: LiteralLike):
+    return IsLiteral()
 
 
 @data_style.register

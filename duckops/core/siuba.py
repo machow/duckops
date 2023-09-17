@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from sqlalchemy import sql
-from sqlalchemy.sql.expression import FunctionElement
-from sqlalchemy.ext.compiler import compiles
 
 from siuba.sql.dialects.duckdb import DuckdbColumn, DuckdbColumnAgg
 from siuba.sql.translate import AggOver, CustomOverClause, CumlOver
@@ -63,61 +61,11 @@ class NoArgOver(CumlOver):
         return f
 
 
-# Sqlalchemy functions ----
+def to_symbol(dispatcher, args):
+    from siuba.siu import create_sym_call, FuncArg
+    from duckops.core.convert import convert
+    from duckops.prototypes import LiteralLike
 
-
-class assign_equals(FunctionElement):
-    name = "assign_equals"
-    inherit_cache = True
-
-
-class lambda_function(FunctionElement):
-    name = "lambda_function"
-    inherit_cache = True
-
-
-class list_comprehension(FunctionElement):
-    # should be 3 entries: body, iterable, ifs
-    name = "list_comprehension"
-    inherit_cache = True
-
-
-class extract_infix(FunctionElement):
-    name = "extract_infix"
-    inherit_cache = True
-
-
-@compiles(assign_equals)
-def _(element, compiler, **kw):
-    lhs, rhs = element.clauses
-    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    return f"{proc_lhs} := {proc_rhs}"
-
-
-@compiles(extract_infix)
-def _(element, compiler, **kw):
-    lhs, rhs = element.clauses
-    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    return f"{proc_lhs}[{proc_rhs}]"
-
-
-@compiles(lambda_function)
-def _(element, compiler, **kw):
-    # lhs should be called parameter, rhs body
-    lhs, rhs = element.clauses
-    proc_lhs, proc_rhs = compiler.process(lhs, **kw), compiler.process(rhs, **kw)
-    return f"{proc_lhs} -> {proc_rhs}"
-
-
-@compiles(list_comprehension)
-def _(element, compiler, **kw):
-    # lhs should be called parameter, rhs body
-    procs = [compiler.process(el, **kw) for el in element.clauses]
-    body, iterable, *ifs = procs
-
-    str_ifs = "IF ".join([" "] + ifs)
-    return f"[{body} for x in {iterable}{str_ifs}]"
-
-
-def flatten_arg_kwargs(args, kwargs):
-    return (*args, *kwargs.values())
+    # TODO: need the dispatch for when it receives the column collection?
+    converted = [convert(arg) if isinstance(arg, LiteralLike) else arg for arg in args]
+    return create_sym_call(FuncArg(dispatcher), *converted)

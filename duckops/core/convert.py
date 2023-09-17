@@ -27,3 +27,15 @@ def _(scalar: list):
 def _(scalar: Interval):
     # TODO: convert used to pass codata as first argument
     return scalar.convert(DuckdbColumn())
+
+
+# @convert.register
+# def _(scalar: SbLazy):
+#    from siuba.siu.visitors import CodataVisitor
+#    from siuba.siu import strip_symbolic
+#
+#    visitor = CodataVisitor(dispatch_cls=DuckdbColumn, result_cls=object)
+#
+#    new_expr = visitor.enter(strip_symbolic(scalar))
+#
+#

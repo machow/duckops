@@ -3,35 +3,21 @@ from __future__ import annotations
 from functools import wraps, singledispatch
 
 # concrete data ---
-from duckops.core.siuba import (  # noqa: F401
-    ReplaceFx,
-    sql_win,
-    register_agg,
-    flatten_arg_kwargs,
-    NoArgOver,
-    assign_equals,
-    lambda_function,
-    list_comprehension,
-    extract_infix,
-)
-from siuba.siu.dispatchers import NoArgs
 from siuba.sql.dialects.duckdb import DuckdbColumn
+from duckops.core.siuba import to_symbol, register_agg  # noqa: F401
 
-from duckops.core.convert import convert
+from duckops.core.sql import (
+    assign_equals,
+)
+
 from duckops.core.query_call import query_call
 from duckops.prototypes import (  # noqa: F401
-    PdSeries,
-    PlSeries,
-    DatetimeLike,
-    StringLike,
-    LiteralLike,
+    IsUnknown,
     IsLiteral,
     IsConcrete,
     IsConcretePandas,
     IsConcretePolars,
     IsSymbol,
-    ConcreteLike,
-    SymbolLike,
     data_style,
 )
 from sqlalchemy import sql
@@ -41,6 +27,12 @@ from sqlalchemy import sql
 #   * process all LiteralLike to go into SQL
 #   * ConcreteLike dispatch: separate literals and concretes
 #   * Handle homogeneous tuples as LiteralLike list
+class NoArgs:
+    """Represent a lack of positional arguments to a singledispatch call.
+
+    This is necessary because functools.singledispatch requires at least
+    one argument.
+    """
 
 
 def support_no_args(f):
@@ -96,70 +88,7 @@ def create_generic(_f):
         named_args = [assign_equals(sql.text(k), v) for k, v in kwargs.items()]
         return getattr(sql.func, f.__name__)(*args, *named_args)
 
-    # @_core.sql_agg("arg_max", _tr.AggOver)
-
     return f
-
-
-def to_symbol(dispatcher, args):
-    from siuba.siu import create_sym_call, FuncArg
-
-    # TODO: need the dispatch for when it receives the column collection?
-    converted = [convert(arg) if isinstance(arg, LiteralLike) else arg for arg in args]
-    return create_sym_call(FuncArg(dispatcher), *converted)
-
-
-@singledispatch
-def lam(expr):
-    # TODO: shouldn't need a lam function, the duckdp ops
-    # themselves should handle this
-    raise NotImplementedError()
-
-
-@lam.register
-def _lam_lazy(expr: SymbolLike):
-    from siuba.siu import strip_symbolic
-
-    new_expr = ReplaceFx(sql.column("x")).enter(strip_symbolic(expr))
-
-    return to_symbol(lam, (new_expr,))
-
-
-@lam.register
-def _lam_duckdb(codata: DuckdbColumn, expr):
-    return lambda_function(sql.column("x"), expr)
-
-
-@create_generic
-def extract(obj, ii):
-    ...
-
-
-@extract.register
-def _extract_duckdb(codata: DuckdbColumn, obj, ii):
-    return extract_infix(obj, ii)
-
-
-@singledispatch
-def list_comp(body, iterable, *ifs):
-    # TODO ifs should not be *args, but we need to be
-    # careful handling lists of calls in lazy expressions
-    return dispatch_on_trait(list_comp, (body, iterable, *ifs), {})
-
-
-@list_comp.register
-def _list_comp(codata: IsSymbol, body, iterable, *ifs):
-    replacer = ReplaceFx(sql.column("x"))
-    new_body = replacer.visit(body)
-
-    new_ifs = list(map(replacer.visit, ifs))
-
-    return to_symbol(list_comp, (new_body, iterable, *new_ifs))
-
-
-@list_comp.register
-def _list_comp(codata: DuckdbColumn, body, iterable, *ifs):
-    return list_comprehension(body, iterable, *ifs)
 
 
 def dispatch_on_trait(dispatcher, args, kwargs):
@@ -171,17 +100,29 @@ def dispatch_on_trait(dispatcher, args, kwargs):
     return dispatcher(trait, *args, **kwargs)
 
 
+def flatten_arg_kwargs(args, kwargs):
+    return (*args, *kwargs.values())
+
+
 def dispatch_style(args):
-    concretes, literals, symbols = set(), set(), set()
+    concretes, literals, symbols, unknown = set(), set(), set(), set()
 
     for arg in args:
-        if isinstance(arg, ConcreteLike):
-            concretes.add(type(arg))
-        elif isinstance(arg, LiteralLike):
+        ds = data_style(arg)
+        if isinstance(ds, IsConcrete):
+            active = concretes
+        elif isinstance(ds, IsLiteral):
             # TODO: Interval is a Call and a Literal
-            literals.add(type(arg))
-        elif isinstance(arg, SymbolLike):
-            symbols.add(type(arg))
+            active = literals
+        elif isinstance(ds, IsSymbol):
+            active = symbols
+        elif isinstance(ds, IsUnknown):
+            # note that unknown args are currently skipped over
+            active = unknown
+        else:
+            raise TypeError(f"Unsupported type: {type(arg)}")
+
+        active.add(type(ds))
 
     # guards ----
     if len(concretes) > 1:
@@ -196,12 +137,13 @@ def dispatch_style(args):
     elif symbols and concretes:
         raise NotImplementedError()
     elif symbols:
-        # TODO: we have sets of types, but singledispatch only works with instances,
-        # so we have to manually call its dispatch method (which takes types).
-        return data_style.dispatch(list(symbols)[0])(None)
+        # TODO: we stored a set of trait types, but expect dispatch_style to return
+        # an instance of the trait type. If traits defined a __hash__, we could work
+        # around this.
+        return list(symbols)[0]()
     elif concretes:
         # TODO: same as above :/
-        return data_style.dispatch(list(concretes)[0])(None)
+        return list(concretes)[0]()
     elif literals:
         return IsLiteral()
 

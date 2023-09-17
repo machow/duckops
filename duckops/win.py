@@ -1,5 +1,5 @@
 # from . import _core
-from .proto import create_generic
+from .core.dispatch import create_generic
 from .core.siuba import NoArgOver, sql_win
 from siuba.sql import translate as _tr
 

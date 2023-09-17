@@ -2,7 +2,7 @@ from functools import singledispatch
 from sqlalchemy import sql
 
 from siuba.sql.dialects.duckdb import DuckdbColumn
-from duckops.prototypes import (
+from duckops.core.data_style import (
     PdSeries,
     IsLiteral,
     IsConcretePandas,

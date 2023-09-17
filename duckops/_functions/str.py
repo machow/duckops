@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 from typing import overload, TYPE_CHECKING
-from duckops.proto import create_generic, register_agg
+from duckops.core.dispatch import create_generic, register_agg
 
 if TYPE_CHECKING:
-    from duckops.prototypes import *
+    from duckops.core.data_style import *
     AAA = 1
 
 del TYPE_CHECKING

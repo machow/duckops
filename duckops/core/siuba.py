@@ -64,7 +64,7 @@ class NoArgOver(CumlOver):
 def to_symbol(dispatcher, args):
     from siuba.siu import create_sym_call, FuncArg
     from duckops.core.convert import convert
-    from duckops.prototypes import LiteralLike
+    from duckops.core.data_style import LiteralLike
 
     # TODO: need the dispatch for when it receives the column collection?
     converted = [convert(arg) if isinstance(arg, LiteralLike) else arg for arg in args]

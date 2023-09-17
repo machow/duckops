@@ -1,7 +1,7 @@
 from duckops.core.siuba import to_symbol, DuckdbColumn, ReplaceFx
-from duckops.proto import dispatch_on_trait, create_generic
+from duckops.core.dispatch import dispatch_on_trait, create_generic
 from duckops.core._type_backends import SbLazy
-from duckops.prototypes import IsSymbol, IsLiteral, IsConcrete
+from duckops.core.data_style import IsSymbol, IsLiteral, IsConcrete
 from duckops.core.sql import lambda_function, extract_infix, list_comprehension
 
 from sqlalchemy import sql

@@ -4,10 +4,13 @@ from functools import singledispatch
 
 from siuba.siu import Symbolic, Call
 from duckops._types import Interval
-from duckops.core._type_backends import PdSeries, PlSeries, SqlaClauseElement
+from duckops.core._type_backends import PdSeries, PlSeries, SqlaClauseElement, SbLazy
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
+# Types ----
+# Note that these should be used only for type annotations
+# TODO: only make available when TYPE_CHECKING?
 
 AInvalid = Any
 ABool = Any
@@ -23,13 +26,16 @@ UnionLike = Any
 LambdaLike = Any
 UuidLike = Any
 
+ColumnLike = Union[PdSeries, PlSeries, SbLazy]
 
 # Unions ----
-# Date, Timestamp, Time, Timestamp with Timezone
-# But also, what is Time?
-DatetimeLike = Union[Interval]
-StringLike = Union[str]
-NumberLike = Union[int, float]
+# Date, Timestamp, Time, Timestamp with Timezone (what is a duckdb Time type?)
+# Note that ColumnLike is added to these, because we can't know the internal type
+# of many column types, but also don't want the type checker to yell at us.
+# Using a ColumnLike is accepting that the database will decide.
+DatetimeLike = Union[Interval, datetime, timedelta, date, ColumnLike]
+StringLike = Union[str, ColumnLike]
+NumberLike = Union[int, float, ColumnLike]
 
 
 # Traits ----

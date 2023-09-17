@@ -63,22 +63,10 @@ class IsSymbolSiuba(IsSymbol):
     ...
 
 
-class ConcreteLike(ABC):
-    ...
-
-
-class SymbolLike(ABC):
-    ...
-
-
 class LiteralLike(ABC):
     ...
 
 
-ConcreteLike.register(PdSeries)
-ConcreteLike.register(PlSeries)
-SymbolLike.register(Symbolic)
-SymbolLike.register(Call)
 LiteralLike.register(SqlaClauseElement)
 LiteralLike.register(int)
 LiteralLike.register(float)
@@ -92,7 +80,7 @@ LiteralLike.register(timedelta)
 
 
 @singledispatch
-def data_style(arg):
+def data_style(arg) -> Any:
     return IsUnknown()
 
 

@@ -7,6 +7,9 @@ from duckops.core.sql import lambda_function, extract_infix, list_comprehension
 from sqlalchemy import sql
 
 
+__all__ = ("lam", "extract", "list_comp")
+
+
 def _raise_for_not_lazy(f):
     @f.register(IsLiteral)
     @f.register(IsConcrete)

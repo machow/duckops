@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from typing import overload
-from duckops.proto import create_generic, register_agg
-from duckops.prototypes import *
+from duckops.core.dispatch import create_generic, register_agg
+from duckops.core.data_style import *
 
 
 __all__ = (

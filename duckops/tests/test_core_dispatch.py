@@ -4,7 +4,10 @@ from pandas.testing import assert_series_equal, assert_frame_equal
 import duckdb
 import pytest
 
-from duckops.prototypes import Interval
+# from duckops.syntax import lam, list_comp, extract
+from duckops.core.data_style import Interval
+
+# from duckops.all import list_transform, string_split
 from duckops.str import concat
 from duckops.dt import date_part, today
 from duckops.nested import struct_pack

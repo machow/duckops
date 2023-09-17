@@ -27,10 +27,8 @@ dependencies = [
   # duckdb v0.9.0, but not yet released.
   "pandas<2.1.0",
 
-  "plum-dispatch",
   "siuba",
   "sqlalchemy<=1.4.47",
-  "sqlglot",
 ]
 dynamic = ["version"]
 

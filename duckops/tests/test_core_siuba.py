@@ -49,7 +49,8 @@ def test_extract():
     res = (
         tbl_empty()
         >> mutate(
-            name=list_pack(Lazy("one"), "two", "three"), first=extract(_["name"], 1)
+            name=list_pack(Lazy("one"), "two", "three"),
+            first=extract(_["name"], 1),
         )
         >> collect()
     )

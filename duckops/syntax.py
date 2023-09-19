@@ -1,6 +1,6 @@
 from duckops.core.siuba import to_symbol, DuckdbColumn, ReplaceFx
 from duckops.core.dispatch import dispatch_on_trait, create_generic
-from duckops.core._type_backends import SbLazy
+from duckops.core._databackends import SbLazy
 from duckops.core.data_style import IsSymbol, IsLiteral, IsConcrete
 from duckops.core.sql import lambda_function, extract_infix, list_comprehension
 
@@ -59,22 +59,22 @@ def _extract_duckdb(codata: DuckdbColumn, obj, ii):
 
 @_raise_for_not_lazy
 @create_generic
-def list_comp(body, iterable, *ifs):
+def list_comp(iterable, body, *ifs):
     # TODO ifs should not be *args, but we need to be
     # careful handling lists of calls in lazy expressions
-    return dispatch_on_trait(list_comp, (body, iterable, *ifs), {})
+    return dispatch_on_trait(list_comp, (iterable, body, *ifs), {})
 
 
 @list_comp.register
-def _list_comp_lazy(codata: IsSymbol, body, iterable, *ifs):
+def _list_comp_lazy(codata: IsSymbol, iterable, body, *ifs):
     replacer = ReplaceFx(sql.column("x"))
     new_body = replacer.visit(body)
 
     new_ifs = list(map(replacer.visit, ifs))
 
-    return to_symbol(list_comp, (new_body, iterable, *new_ifs))
+    return to_symbol(list_comp, (iterable, new_body, *new_ifs))
 
 
 @list_comp.register
-def _list_comp_sql(codata: DuckdbColumn, body, iterable, *ifs):
-    return list_comprehension(body, iterable, *ifs)
+def _list_comp_sql(codata: DuckdbColumn, iterable, body, *ifs):
+    return list_comprehension(iterable, body, *ifs)

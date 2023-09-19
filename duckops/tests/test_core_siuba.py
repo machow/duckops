@@ -9,7 +9,6 @@ from duckops.syntax import lam, extract, list_comp
 from duckops.helpers import tbl_empty
 
 from siuba import tbl, mutate, summarize, _, across, Fx, collect
-from siuba.siu import Lazy
 from sqlalchemy import create_engine
 
 
@@ -23,8 +22,8 @@ def test_list_comp():
         tbl_empty()
         >> mutate(
             # TODO: should we be eager by default? wrapping in Lazy seems annoying
-            ships=list_pack(Lazy("a b c"), "d e f"),
-            split=list_comp(string_split(Fx, " "), _.ships, contains(Fx, "a")),
+            ships=list_pack("a b c", "d e f"),
+            split=list_comp(_.ships, string_split(Fx, " "), contains(Fx, "a")),
         )
         >> collect(_)
     )
@@ -36,7 +35,7 @@ def test_lam():
     res = (
         tbl_empty()
         >> mutate(
-            name=list_pack(Lazy("a b c"), "d e f"),
+            name=list_pack("a b c", "d e f"),
             short_name=list_transform(_["name"], lam(string_split(Fx, " "))),
         )
         >> collect(_)
@@ -49,7 +48,7 @@ def test_extract():
     res = (
         tbl_empty()
         >> mutate(
-            name=list_pack(Lazy("one"), "two", "three"),
+            name=list_pack("one", "two", "three"),
             first=extract(_["name"], 1),
         )
         >> collect()

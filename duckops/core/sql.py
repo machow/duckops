@@ -49,7 +49,7 @@ def _(element, compiler, **kw):
 def _(element, compiler, **kw):
     # lhs should be called parameter, rhs body
     procs = [compiler.process(el, **kw) for el in element.clauses]
-    body, iterable, *ifs = procs
+    iterable, body, *ifs = procs
 
     str_ifs = "IF ".join([" "] + ifs)
     return f"[{body} for x in {iterable}{str_ifs}]"

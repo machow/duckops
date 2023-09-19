@@ -1,0 +1,9 @@
+# num.asin { #duckops.num.asin }
+
+`num.asin(col0)`
+
+computes the arcsine of x
+
+| duckdb example | result |
+| -------------- | ------ |
+| asin(0.5) | 0.5235987755982989 |

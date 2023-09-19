@@ -1,0 +1,7 @@
+# unknown.add { #duckops.unknown.add }
+
+`unknown.add(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

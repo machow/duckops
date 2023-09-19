@@ -1,0 +1,9 @@
+# str.left_grapheme { #duckops.str.left_grapheme }
+
+`str.left_grapheme(col0, col1)`
+
+Extract the left-most grapheme clusters
+
+| duckdb example | result |
+| -------------- | ------ |
+| left_grapheme('🤦🏼‍♂️🤦🏽‍♀️', 1) | 🤦🏼‍♂️ |

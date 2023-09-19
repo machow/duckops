@@ -1,0 +1,9 @@
+# str.ltrim { #duckops.str.ltrim }
+
+`str.ltrim(col0)`
+
+Removes any spaces from the left side of the string
+
+| duckdb example | result |
+| -------------- | ------ |
+| ltrim('␣␣␣␣test␣␣') | test␣␣ |

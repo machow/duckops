@@ -1,0 +1,9 @@
+# nested.struct_pack { #duckops.nested.struct_pack }
+
+`nested.struct_pack(*args)`
+
+Create a STRUCT containing the argument values. The entry name will be the bound variable name.
+
+| duckdb example | result |
+| -------------- | ------ |
+| struct_pack(i := 4, s := 'string') | {'i': 3, 's': 'string'} |

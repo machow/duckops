@@ -1,0 +1,9 @@
+# dt.to_milliseconds { #duckops.dt.to_milliseconds }
+
+`dt.to_milliseconds(col0)`
+
+Construct a millisecond interval
+
+| duckdb example | result |
+| -------------- | ------ |
+| to_milliseconds(5) | INTERVAL 5 MILLISECOND |

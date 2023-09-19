@@ -1,0 +1,7 @@
+# unknown.min_by { #duckops.unknown.min_by }
+
+`unknown.min_by(col0, col1)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

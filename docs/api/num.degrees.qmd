@@ -1,0 +1,9 @@
+# num.degrees { #duckops.num.degrees }
+
+`num.degrees(col0)`
+
+converts radians to degrees
+
+| duckdb example | result |
+| -------------- | ------ |
+| degrees(pi()) | 180 |

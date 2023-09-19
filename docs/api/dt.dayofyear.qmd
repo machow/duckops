@@ -1,0 +1,9 @@
+# dt.dayofyear { #duckops.dt.dayofyear }
+
+`dt.dayofyear(col0)`
+
+Numeric ISO weekday (Monday = 1, Sunday = 7)
+
+| duckdb example | result |
+| -------------- | ------ |
+| isodow(date '1992-02-15') | 46 |

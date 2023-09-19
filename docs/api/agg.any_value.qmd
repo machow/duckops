@@ -1,0 +1,9 @@
+# agg.any_value { #duckops.agg.any_value }
+
+`agg.any_value(col0)`
+
+Returns the first non-null value from arg.
+
+| duckdb example | result |
+| -------------- | ------ |
+| any_value(A) | nan |

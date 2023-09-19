@@ -1,0 +1,9 @@
+# str.array_extract { #duckops.str.array_extract }
+
+`str.array_extract(col0, col1)`
+
+Extract a single character using a (1-based) index.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_extract('DuckDB', 2) | 'u' |

@@ -1,0 +1,9 @@
+# nested.list_reverse_sort { #duckops.nested.list_reverse_sort }
+
+`nested.list_reverse_sort(col0)`
+
+Sorts the elements of the list in reverse order. See the Sorting Lists section for more details about the null sorting order.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list_reverse_sort([3, 6, 1, 2]) | [6, 3, 2, 1] |

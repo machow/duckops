@@ -1,0 +1,9 @@
+# str.prefix { #duckops.str.prefix }
+
+`str.prefix(col0, col1)`
+
+Return true if string starts with search_string.
+
+| duckdb example | result |
+| -------------- | ------ |
+| prefix('abc', 'ab') | true |

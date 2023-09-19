@@ -1,0 +1,9 @@
+# num.lgamma { #duckops.num.lgamma }
+
+`num.lgamma(col0)`
+
+computes the log of the gamma function.
+
+| duckdb example | result |
+| -------------- | ------ |
+| lgamma(2) | 0 |

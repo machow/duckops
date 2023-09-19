@@ -1,0 +1,9 @@
+# nested.list_pack { #duckops.nested.list_pack }
+
+`nested.list_pack(*args)`
+
+Alias for list_value.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list_pack(4, 5, 6) | [4, 5, 6] |

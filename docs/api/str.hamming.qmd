@@ -1,0 +1,9 @@
+# str.hamming { #duckops.str.hamming }
+
+`str.hamming(col0, col1)`
+
+The number of positions with different characters for 2 strings of equal length. Different case is considered different.
+
+| duckdb example | result |
+| -------------- | ------ |
+| hamming('duck','luck') | 1.0 |

@@ -1,0 +1,9 @@
+# str.suffix { #duckops.str.suffix }
+
+`str.suffix(col0, col1)`
+
+Return true if string ends with search_string.
+
+| duckdb example | result |
+| -------------- | ------ |
+| suffix('abc', 'bc') | true |

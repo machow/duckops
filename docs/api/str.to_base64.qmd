@@ -1,0 +1,9 @@
+# str.to_base64 { #duckops.str.to_base64 }
+
+`str.to_base64(col0)`
+
+Convert a blob to a base64 encoded string. Alias of base64.
+
+| duckdb example | result |
+| -------------- | ------ |
+| to_base64('A'::blob) | QQ== |

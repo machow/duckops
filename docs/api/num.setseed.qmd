@@ -1,0 +1,9 @@
+# num.setseed { #duckops.num.setseed }
+
+`num.setseed(col0)`
+
+sets the seed to be used for the random function
+
+| duckdb example | result |
+| -------------- | ------ |
+| setseed(0.42) | nan |

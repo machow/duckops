@@ -1,0 +1,9 @@
+# nested.list_aggregate { #duckops.nested.list_aggregate }
+
+`nested.list_aggregate(col0, col1, *args)`
+
+Executes the aggregate function name on the elements of list. See the List Aggregates section for more details.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list_aggregate([1, 2, NULL], 'min') | 1 |

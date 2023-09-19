@@ -1,0 +1,9 @@
+# str.upper { #duckops.str.upper }
+
+`str.upper(col0)`
+
+Convert string to upper case
+
+| duckdb example | result |
+| -------------- | ------ |
+| upper('Hello') | HELLO |

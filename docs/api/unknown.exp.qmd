@@ -1,0 +1,7 @@
+# unknown.exp { #duckops.unknown.exp }
+
+`unknown.exp(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

@@ -1,0 +1,9 @@
+# nested.array_indexof { #duckops.nested.array_indexof }
+
+`nested.array_indexof(col0, col1)`
+
+Alias for list_position.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_indexof([1, 2, NULL], 2) | 2 |

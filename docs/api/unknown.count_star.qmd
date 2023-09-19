@@ -1,0 +1,7 @@
+# unknown.count_star { #duckops.unknown.count_star }
+
+`unknown.count_star()`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

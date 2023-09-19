@@ -1,0 +1,9 @@
+# agg.fsum { #duckops.agg.fsum }
+
+`agg.fsum(col0)`
+
+Calculates the sum using a more accurate floating point summation (Kahan Sum).
+
+| duckdb example | result |
+| -------------- | ------ |
+| fsum(A) | nan |

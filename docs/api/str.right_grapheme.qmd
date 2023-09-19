@@ -1,0 +1,9 @@
+# str.right_grapheme { #duckops.str.right_grapheme }
+
+`str.right_grapheme(col0, col1)`
+
+Extract the right-most count grapheme clusters
+
+| duckdb example | result |
+| -------------- | ------ |
+| right_grapheme('🤦🏼‍♂️🤦🏽‍♀️', 1) | 🤦🏽‍♀️ |

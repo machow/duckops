@@ -1,0 +1,7 @@
+# unknown.sumKahan { #duckops.unknown.sumKahan }
+
+`unknown.sumKahan(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

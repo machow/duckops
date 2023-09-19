@@ -1,0 +1,9 @@
+# num.gamma { #duckops.num.gamma }
+
+`num.gamma(col0)`
+
+interpolation of (x-1) factorial (so decimal inputs are allowed)
+
+| duckdb example | result |
+| -------------- | ------ |
+| gamma(5.5) | 52.34277778455352 |

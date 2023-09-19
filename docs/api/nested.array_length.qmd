@@ -1,0 +1,9 @@
+# nested.array_length { #duckops.nested.array_length }
+
+`nested.array_length(col0)`
+
+Alias for len.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_length([1, 2, 3]) | 3 |

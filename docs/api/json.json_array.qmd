@@ -1,0 +1,9 @@
+# json.json_array { #duckops.json.json_array }
+
+`json.json_array(*args)`
+
+Create a JSON array from any number of values
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

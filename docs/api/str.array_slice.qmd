@@ -1,0 +1,9 @@
+# str.array_slice { #duckops.str.array_slice }
+
+`str.array_slice(col0, col1, col2, *args)`
+
+Extract a string using slice conventions. NULLs are interpreted as the bounds of the string. Negative values are accepted.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_slice('DuckDB', 5, NULL) | 'DB' |

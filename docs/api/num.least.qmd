@@ -1,0 +1,9 @@
+# num.least { #duckops.num.least }
+
+`num.least(col0, *args)`
+
+selects the smallest value
+
+| duckdb example | result |
+| -------------- | ------ |
+| least(3, 2, 4, 4) | 2 |

@@ -1,0 +1,9 @@
+# agg.var_samp { #duckops.agg.var_samp }
+
+`agg.var_samp(col0)`
+
+Returns the sample variance of all input values.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

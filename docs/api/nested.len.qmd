@@ -1,0 +1,9 @@
+# nested.len { #duckops.nested.len }
+
+`nested.len(col0)`
+
+Return the length of the list.
+
+| duckdb example | result |
+| -------------- | ------ |
+| len([1, 2, 3]) | 3 |

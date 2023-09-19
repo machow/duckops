@@ -1,0 +1,9 @@
+# num.radians { #duckops.num.radians }
+
+`num.radians(col0)`
+
+converts degrees to radians
+
+| duckdb example | result |
+| -------------- | ------ |
+| radians(90) | 1.5707963267948966 |

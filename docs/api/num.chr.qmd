@@ -1,0 +1,9 @@
+# num.chr { #duckops.num.chr }
+
+`num.chr(col0)`
+
+returns a character which is corresponding the ASCII code value or Unicode code point
+
+| duckdb example | result |
+| -------------- | ------ |
+| chr(65) | A |

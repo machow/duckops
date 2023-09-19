@@ -1,0 +1,9 @@
+# agg.avg { #duckops.agg.avg }
+
+`agg.avg(col0)`
+
+Calculates the average value for all tuples in arg.
+
+| duckdb example | result |
+| -------------- | ------ |
+| avg(A) | nan |

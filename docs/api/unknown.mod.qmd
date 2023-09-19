@@ -1,0 +1,7 @@
+# unknown.mod { #duckops.unknown.mod }
+
+`unknown.mod(col0, col1)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

@@ -1,0 +1,7 @@
+# unknown.get_bit { #duckops.unknown.get_bit }
+
+`unknown.get_bit(col0, col1)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

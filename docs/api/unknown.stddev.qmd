@@ -1,0 +1,7 @@
+# unknown.stddev { #duckops.unknown.stddev }
+
+`unknown.stddev(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

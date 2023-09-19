@@ -1,0 +1,9 @@
+# str.replace { #duckops.str.replace }
+
+`str.replace(col0, col1, col2)`
+
+Replaces any occurrences of the source with target in string
+
+| duckdb example | result |
+| -------------- | ------ |
+| replace('hello', 'l', '-') | he--o |

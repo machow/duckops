@@ -1,0 +1,9 @@
+# json.json_transform_strict { #duckops.json.json_transform_strict }
+
+`json.json_transform_strict(col0, col1)`
+
+Same as json_transform, but throws an error when type casting fails
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

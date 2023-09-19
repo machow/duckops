@@ -1,0 +1,9 @@
+# json.json_keys { #duckops.json.json_keys }
+
+`json.json_keys(col0)`
+
+Returns the keys of json as a LIST of VARCHAR, if json is a JSON object. If path is specified, return the keys of the JSON object at the given path. If path is a LIST, the result will be LIST of LIST of VARCHAR
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

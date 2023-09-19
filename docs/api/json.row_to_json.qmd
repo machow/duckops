@@ -1,0 +1,9 @@
+# json.row_to_json { #duckops.json.row_to_json }
+
+`json.row_to_json(*args)`
+
+Alias for to_json that only accepts STRUCT
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

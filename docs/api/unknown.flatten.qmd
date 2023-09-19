@@ -1,0 +1,7 @@
+# unknown.flatten { #duckops.unknown.flatten }
+
+`unknown.flatten(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

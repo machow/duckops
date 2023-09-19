@@ -1,0 +1,9 @@
+# str.lcase { #duckops.str.lcase }
+
+`str.lcase(col0)`
+
+Alias of lower. Convert string to lower case
+
+| duckdb example | result |
+| -------------- | ------ |
+| lcase('Hello') | hello |

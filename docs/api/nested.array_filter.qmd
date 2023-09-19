@@ -1,0 +1,9 @@
+# nested.array_filter { #duckops.nested.array_filter }
+
+`nested.array_filter(col0, col1)`
+
+Alias for list_filter.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_filter(l, x -> x > 4) | [5, 6] |

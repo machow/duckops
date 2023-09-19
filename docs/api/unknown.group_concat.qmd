@@ -1,0 +1,7 @@
+# unknown.group_concat { #duckops.unknown.group_concat }
+
+`unknown.group_concat(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

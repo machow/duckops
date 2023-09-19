@@ -1,0 +1,7 @@
+# unknown.mean { #duckops.unknown.mean }
+
+`unknown.mean(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

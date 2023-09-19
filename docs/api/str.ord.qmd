@@ -1,0 +1,9 @@
+# str.ord { #duckops.str.ord }
+
+`str.ord(col0)`
+
+Return ASCII character code of the leftmost character in a string.
+
+| duckdb example | result |
+| -------------- | ------ |
+| ord('ü') | 252 |

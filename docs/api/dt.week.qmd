@@ -1,0 +1,9 @@
+# dt.week { #duckops.dt.week }
+
+`dt.week(col0)`
+
+ISO Week
+
+| duckdb example | result |
+| -------------- | ------ |
+| week(date '1992-02-15') | 7 |

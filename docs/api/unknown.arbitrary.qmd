@@ -1,0 +1,7 @@
+# unknown.arbitrary { #duckops.unknown.arbitrary }
+
+`unknown.arbitrary(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

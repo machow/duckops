@@ -1,0 +1,9 @@
+# dt.make_time { #duckops.dt.make_time }
+
+`dt.make_time(col0, col1, col2)`
+
+The time for the given parts
+
+| duckdb example | result |
+| -------------- | ------ |
+| make_time(13, 34, 27.123456) | 13:34:27.123456 |

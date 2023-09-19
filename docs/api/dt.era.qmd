@@ -1,0 +1,9 @@
+# dt.era { #duckops.dt.era }
+
+`dt.era(col0)`
+
+Calendar era
+
+| duckdb example | result |
+| -------------- | ------ |
+| era(date '0044-03-15 (BC)') | 0 |

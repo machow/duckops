@@ -1,0 +1,7 @@
+# unknown.constant_or_null { #duckops.unknown.constant_or_null }
+
+`unknown.constant_or_null(col0, col1, *args)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

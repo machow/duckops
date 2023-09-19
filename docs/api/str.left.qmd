@@ -1,0 +1,9 @@
+# str.left { #duckops.str.left }
+
+`str.left(col0, col1)`
+
+Extract the left-most count characters
+
+| duckdb example | result |
+| -------------- | ------ |
+| left('Hello🦆', 2) | He |

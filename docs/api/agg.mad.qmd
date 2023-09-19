@@ -1,0 +1,9 @@
+# agg.mad { #duckops.agg.mad }
+
+`agg.mad(col0)`
+
+Returns the median absolute deviation for the values within x. NULL values are ignored. Temporal types return a positive INTERVAL.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

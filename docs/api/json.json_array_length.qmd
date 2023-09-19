@@ -1,0 +1,9 @@
+# json.json_array_length { #duckops.json.json_array_length }
+
+`json.json_array_length(col0)`
+
+Return the number of elements in the JSON array json, or 0 if it is not a JSON array. If path is specified, return the number of elements in the JSON array at the given path. If path is a LIST, the result will be LIST of array lengths
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

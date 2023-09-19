@@ -1,0 +1,9 @@
+# str.list_extract { #duckops.str.list_extract }
+
+`str.list_extract(col0, col1)`
+
+An alias for array_extract.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list_extract('DuckDB', 2) | 'u' |

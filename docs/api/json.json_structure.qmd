@@ -1,0 +1,9 @@
+# json.json_structure { #duckops.json.json_structure }
+
+`json.json_structure(col0)`
+
+Return the structure of json. Throws an error if the structure is inconsistent (incompatible types in an array)
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

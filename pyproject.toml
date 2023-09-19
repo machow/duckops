@@ -38,6 +38,7 @@ dev = [
   "pytest-dotenv",
   "polars",
   "jupyter",
+  "pyarrow"
 ]
 
 

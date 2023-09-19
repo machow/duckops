@@ -1,0 +1,9 @@
+# agg.covar_pop { #duckops.agg.covar_pop }
+
+`agg.covar_pop(col0, col1)`
+
+Returns the population covariance of input values.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

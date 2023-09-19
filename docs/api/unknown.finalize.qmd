@@ -1,0 +1,7 @@
+# unknown.finalize { #duckops.unknown.finalize }
+
+`unknown.finalize(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

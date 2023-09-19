@@ -1,0 +1,9 @@
+# dt.day { #duckops.dt.day }
+
+`dt.day(col0)`
+
+Day
+
+| duckdb example | result |
+| -------------- | ------ |
+| day(date '1992-02-15') | 15 |

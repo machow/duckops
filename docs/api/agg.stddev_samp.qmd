@@ -1,0 +1,9 @@
+# agg.stddev_samp { #duckops.agg.stddev_samp }
+
+`agg.stddev_samp(col0)`
+
+Returns the sample standard deviation.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

@@ -1,0 +1,9 @@
+# str.unicode { #duckops.str.unicode }
+
+`str.unicode(col0)`
+
+Returns the unicode code of the first character of the string
+
+| duckdb example | result |
+| -------------- | ------ |
+| unicode('ü') | 252 |

@@ -1,0 +1,9 @@
+# nested.map_from_entries { #duckops.nested.map_from_entries }
+
+`nested.map_from_entries(*args)`
+
+Returns a map created from the entries of the array
+
+| duckdb example | result |
+| -------------- | ------ |
+| map_from_entries([{k: 5, v: 'val1'}, {k: 3, v: 'val2'}]); | {5=val1, 3=val2} |

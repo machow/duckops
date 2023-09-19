@@ -1,0 +1,9 @@
+# str.regexp_matches { #duckops.str.regexp_matches }
+
+`str.regexp_matches(col0, col1)`
+
+Returns true if a part of string matches the regex (see Pattern Matching)
+
+| duckdb example | result |
+| -------------- | ------ |
+| regexp_matches('anabanana', '(an)*') | true |

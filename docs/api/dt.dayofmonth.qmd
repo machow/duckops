@@ -1,0 +1,9 @@
+# dt.dayofmonth { #duckops.dt.dayofmonth }
+
+`dt.dayofmonth(col0)`
+
+Day (synonym)
+
+| duckdb example | result |
+| -------------- | ------ |
+| dayofmonth(date '1992-02-15') | 15 |

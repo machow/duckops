@@ -1,0 +1,9 @@
+# str.rpad { #duckops.str.rpad }
+
+`str.rpad(col0, col1, col2)`
+
+Pads the string with the character from the right until it has count characters
+
+| duckdb example | result |
+| -------------- | ------ |
+| rpad('hello', 10, '<') | hello<<<<< |

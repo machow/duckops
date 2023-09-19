@@ -1,0 +1,9 @@
+# str.substring { #duckops.str.substring }
+
+`str.substring(col0, col1, col2)`
+
+Extract substring of length characters starting from character start. Note that a start value of 1 refers to the first character of the string.
+
+| duckdb example | result |
+| -------------- | ------ |
+| substring('Hello', 2, 2) | el |

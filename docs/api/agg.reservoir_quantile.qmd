@@ -1,0 +1,9 @@
+# agg.reservoir_quantile { #duckops.agg.reservoir_quantile }
+
+`agg.reservoir_quantile(col0, col1)`
+
+Gives the approximate quantile using reservoir sampling, the sample size is optional and uses 8192 as a default size.
+
+| duckdb example | result |
+| -------------- | ------ |
+| reservoir_quantile(A,0.5,1024) | nan |

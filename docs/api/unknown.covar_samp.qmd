@@ -1,0 +1,7 @@
+# unknown.covar_samp { #duckops.unknown.covar_samp }
+
+`unknown.covar_samp(col0, col1)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

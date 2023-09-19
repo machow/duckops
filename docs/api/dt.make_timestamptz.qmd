@@ -1,0 +1,9 @@
+# dt.make_timestamptz { #duckops.dt.make_timestamptz }
+
+`dt.make_timestamptz(col0, col1, col2, col3, col4, col5)`
+
+The timestamp with time zone for the given parts in the current time zone
+
+| duckdb example | result |
+| -------------- | ------ |
+| make_timestamptz(1992, 9, 20, 13, 34, 27.123456) | 1992-09-20 13:34:27.123456-07 |

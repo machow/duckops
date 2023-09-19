@@ -1,0 +1,9 @@
+# num.atan2 { #duckops.num.atan2 }
+
+`num.atan2(col0, col1)`
+
+computes the arctangent (x, y)
+
+| duckdb example | result |
+| -------------- | ------ |
+| atan2(0.5, 0.5) | 0.7853981633974483 |

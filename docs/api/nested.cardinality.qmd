@@ -1,0 +1,9 @@
+# nested.cardinality { #duckops.nested.cardinality }
+
+`nested.cardinality(col0, *args)`
+
+Return the size of the map (or the number of entries in the map).
+
+| duckdb example | result |
+| -------------- | ------ |
+| cardinality( map([4, 2], ['a', 'b']) ); | 2 |

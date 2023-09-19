@@ -1,0 +1,7 @@
+# unknown.sum_no_overflow { #duckops.unknown.sum_no_overflow }
+
+`unknown.sum_no_overflow(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

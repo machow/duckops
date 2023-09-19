@@ -1,0 +1,9 @@
+# dt.hour { #duckops.dt.hour }
+
+`dt.hour(col0)`
+
+Hours
+
+| duckdb example | result |
+| -------------- | ------ |
+| hour(timestamp '2021-08-03 11:59:44.123456') | 11 |

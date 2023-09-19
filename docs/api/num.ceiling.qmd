@@ -1,0 +1,9 @@
+# num.ceiling { #duckops.num.ceiling }
+
+`num.ceiling(col0)`
+
+rounds the number up. Alias of ceil.
+
+| duckdb example | result |
+| -------------- | ------ |
+| ceiling(17.4) | 18 |

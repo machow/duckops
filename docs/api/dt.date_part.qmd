@@ -1,0 +1,9 @@
+# dt.date_part { #duckops.dt.date_part }
+
+`dt.date_part(col0, col1)`
+
+Get the subfield (equivalent to extract)
+
+| duckdb example | result |
+| -------------- | ------ |
+| date_part('year', DATE '1992-09-20') | 1992 |

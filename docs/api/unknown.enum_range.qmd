@@ -1,0 +1,7 @@
+# unknown.enum_range { #duckops.unknown.enum_range }
+
+`unknown.enum_range(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

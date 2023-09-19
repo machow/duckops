@@ -1,0 +1,7 @@
+# unknown.enum_code { #duckops.unknown.enum_code }
+
+`unknown.enum_code(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

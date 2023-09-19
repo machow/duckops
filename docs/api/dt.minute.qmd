@@ -1,0 +1,9 @@
+# dt.minute { #duckops.dt.minute }
+
+`dt.minute(col0)`
+
+Minutes
+
+| duckdb example | result |
+| -------------- | ------ |
+| minute(timestamp '2021-08-03 11:59:44.123456') | 59 |

@@ -1,0 +1,9 @@
+# num.greatest { #duckops.num.greatest }
+
+`num.greatest(col0, *args)`
+
+selects the largest value
+
+| duckdb example | result |
+| -------------- | ------ |
+| greatest(3, 2, 4, 4) | 4 |

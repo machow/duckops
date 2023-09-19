@@ -1,0 +1,9 @@
+# nested.array_aggregate { #duckops.nested.array_aggregate }
+
+`nested.array_aggregate(col0, col1, *args)`
+
+Alias for list_aggregate.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_aggregate([1, 2, NULL], 'min') | 1 |

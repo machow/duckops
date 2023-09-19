@@ -1,0 +1,9 @@
+# nested.array_reverse_sort { #duckops.nested.array_reverse_sort }
+
+`nested.array_reverse_sort(col0)`
+
+Alias for list_reverse_sort.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_reverse_sort([3, 6, 1, 2]) | [6, 3, 2, 1] |

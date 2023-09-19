@@ -1,0 +1,175 @@
+---
+title: Challenges
+jupyter:
+  kernel: python3
+---
+
+This page details some outstanding questions and challenges to be resolved in duckops (and the way it interacts with siuba).
+
+
+## Eager evaluation makes laziness hard
+
+### The challenge
+
+Notice that by default, functions return results:
+
+```{python}
+import pandas as pd
+from duckops.all import list_pack
+
+
+list_pack(3, 4, 5)
+```
+
+```{python}
+ser = pd.Series([0, 1, 2])
+
+list_pack(ser, 3, 4)
+```
+
+This is useful for quickly seeing / using the results of one operation. However, it comes at the expense of making lazy operations more challenging.
+
+Currently, at least one argument must be lazy, in order to trigger a lazy result.
+
+```{python}
+from siuba.siu import Lazy
+
+list_pack(Lazy(3), 4, 5)
+```
+
+
+This often works okay, since when using SQL many functions run on columns of data.
+
+```{python}
+from sqlalchemy import create_engine
+from siuba import tbl, _, mutate, show_query
+
+engine = create_engine("duckdb:///:memory:")
+df = pd.DataFrame({"x": [1, 2, 3]})
+
+(tbl(engine, "df", df)
+    >> mutate(res = list_pack(_.x, 4, 5))
+    >> show_query()
+)
+```
+
+
+But becomes a problem when you want to use functions to create a single value.
+
+For example, early in duckops development the code below would error:
+
+```{python}
+#| eval: false
+#|
+(tbl(engine, "df", df)
+    >> mutate(res = list_pack(3, 4, 5))
+    >> show_query()
+)
+```
+
+This is because..
+
+* `list_pack(3, 4, 5)` returns an actual list.
+* siuba did not know how to translate a literal list to SQL.
+
+(It was resolved by adding the `siuba.sql.translate.convert_literal` generic.)
+
+On the other hand, if you call `list_pack` in a lazy way, it always worked fine:
+
+```{python}
+(tbl(engine, "df", df)
+    >> mutate(res = list_pack(Lazy(3), 4, 5))
+    >> show_query()
+)
+```
+
+Similar issues occur currently with `struct_pack`, which returns a dictionary.
+
+
+### How polars handles this
+
+Tools like `polars` handle this by making many functions lazy by default, with a eager argument. For example, the [`polars.concat_str`](https://pola-rs.github.io/polars/py-polars/html/reference/expressions/api/polars.concat_str.html#polars-concat-str) function. (It groups these under the category "expressions").
+
+Others, like [`polars.date_range`](https://pola-rs.github.io/polars/py-polars/html/reference/expressions/api/polars.date_range.html) have an eager argument.
+
+Still others, like [polars.count](https://pola-rs.github.io/polars/py-polars/html/reference/expressions/api/polars.count.html), change the resulting behavior depending on their inputs. For example, a Series input triggers eager behavior, but an expression input returns a new expression.
+
+
+## Conversion of Intervals to timedeltas
+
+### The challenge
+
+By default, duckdb converts intervals to python `datetime.timedelta` objects.
+
+```{python}
+import duckdb
+
+duckdb.execute("SELECT INTERVAL '1 hour'").fetchone()[0]
+```
+
+This works fine for units like `"1 hour"`.
+
+However, because timedelta is incapable of representing the concept "1 year" (because the number of seconds in a year depends on the specific year), this just gets converted into 360 days.
+
+```{python}
+import duckdb
+
+duckdb.execute("SELECT INTERVAL '1 year'").fetchone()[0]
+```
+
+This is essentially a "legibility" problem. `timedelta` is a map of the territory duckdb intervals, and the map is not the territory.
+
+### Consequences
+
+As a result of the representation issues in `timedelta`, eager function calls can produce surprising behaviors.
+
+```{python}
+from datetime import datetime
+from duckops.all import to_years
+
+datetime(2023, 1, 2) - to_years(3)
+```
+
+```{python}
+from duckops.helpers import tbl_empty
+from siuba import mutate, _, show_query
+from siuba.siu import Lazy
+
+tbl_empty() >> mutate(res = datetime(2023, 1, 2) - to_years(Lazy(3))) >> show_query()
+```
+
+Note that the eager version of the code subtracts the wrong number of days (3*360) from the date, while in the lazy version subtracting 3 years simply rewinds back the year part of the date.
+
+(This is more a general problem with dataframe tools integrating with python's `datetime.timedelta`)
+
+
+## Advanced syntax can only run lazily
+
+```{python}
+from duckops.syntax import list_comp, extract, lam
+from duckops.all import string_split, contains, list_transform
+
+from siuba import _, Fx
+
+list_comp(
+  ['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'],
+  string_split(Fx, " ") >> extract(_, 1),
+  contains(Fx, "1701")
+)
+```
+
+
+Moreover, trying to force evaluation using a pipe, results in weirdness.
+
+```{python}
+#| eval: false
+(
+  ['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'] >>
+  list_transform(
+      _,
+      lam(string_split(Fx, " "))
+  )
+)
+```
+
+Expressions like `list_transform` are handled fine inside siuba's lazy table queries.

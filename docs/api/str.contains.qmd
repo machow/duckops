@@ -1,0 +1,9 @@
+# str.contains { #duckops.str.contains }
+
+`str.contains(col0, col1)`
+
+Return true if search_string is found within string
+
+| duckdb example | result |
+| -------------- | ------ |
+| contains('abc','a') | true |

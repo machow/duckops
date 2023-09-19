@@ -1,0 +1,9 @@
+# agg.arg_max { #duckops.agg.arg_max }
+
+`agg.arg_max(col0, col1)`
+
+Finds the row with the maximum val. Calculates the arg expression at that row.
+
+| duckdb example | result |
+| -------------- | ------ |
+| arg_max(A,B) | nan |

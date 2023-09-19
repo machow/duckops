@@ -1,0 +1,9 @@
+# str.hash { #duckops.str.hash }
+
+`str.hash(col0, *args)`
+
+Returns an integer with the hash of the value
+
+| duckdb example | result |
+| -------------- | ------ |
+| hash('🦆') | 2595805878642663834 |

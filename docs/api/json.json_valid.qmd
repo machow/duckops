@@ -1,0 +1,9 @@
+# json.json_valid { #duckops.json.json_valid }
+
+`json.json_valid(col0)`
+
+Return whether json is valid JSON
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

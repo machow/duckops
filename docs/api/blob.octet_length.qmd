@@ -1,0 +1,9 @@
+# blob.octet_length { #duckops.blob.octet_length }
+
+`blob.octet_length(col0)`
+
+Number of bytes in blob
+
+| duckdb example | result |
+| -------------- | ------ |
+| octet_length('ª»'::BLOB) | 2 |

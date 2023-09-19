@@ -1,0 +1,9 @@
+# json.json_merge_patch { #duckops.json.json_merge_patch }
+
+`json.json_merge_patch(*args)`
+
+Merge two json documents together
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

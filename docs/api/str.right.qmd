@@ -1,0 +1,9 @@
+# str.right { #duckops.str.right }
+
+`str.right(col0, col1)`
+
+Extract the right-most count characters
+
+| duckdb example | result |
+| -------------- | ------ |
+| right('Hello🦆', 3) | lo🦆 |

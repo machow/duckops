@@ -1,0 +1,9 @@
+# dt.quarter { #duckops.dt.quarter }
+
+`dt.quarter(col0)`
+
+Quarter
+
+| duckdb example | result |
+| -------------- | ------ |
+| quarter(date '1992-02-15') | 1 |

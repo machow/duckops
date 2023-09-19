@@ -1,0 +1,9 @@
+# nested.list_transform { #duckops.nested.list_transform }
+
+`nested.list_transform(col0, col1)`
+
+Returns a list that is the result of applying the lambda function to each element of the input list. See the Lambda Functions section for more details.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list_transform(l, x -> x + 1) | [5, 6, 7] |

@@ -1,0 +1,9 @@
+# nested.list_slice { #duckops.nested.list_slice }
+
+`nested.list_slice(col0, col1, col2, *args)`
+
+Extract a sublist using slice conventions. NULLs are interpreted as the bounds of the LIST. Negative values are accepted.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list_slice(l, 2, NULL) | [5, 6] |

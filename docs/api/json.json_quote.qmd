@@ -1,0 +1,9 @@
+# json.json_quote { #duckops.json.json_quote }
+
+`json.json_quote(*args)`
+
+Alias for to_json
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

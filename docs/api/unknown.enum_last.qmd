@@ -1,0 +1,7 @@
+# unknown.enum_last { #duckops.unknown.enum_last }
+
+`unknown.enum_last(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

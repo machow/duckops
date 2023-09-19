@@ -1,0 +1,9 @@
+# str.nfc_normalize { #duckops.str.nfc_normalize }
+
+`str.nfc_normalize(col0)`
+
+Convert string to Unicode NFC normalized string. Useful for comparisons and ordering if text data is mixed between NFC normalized and not.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nfc_normalize('ardèch') | arde`ch |

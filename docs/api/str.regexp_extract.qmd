@@ -1,0 +1,9 @@
+# str.regexp_extract { #duckops.str.regexp_extract }
+
+`str.regexp_extract(col0, col1)`
+
+Split the string along the regex and extract first occurrence of group
+
+| duckdb example | result |
+| -------------- | ------ |
+| regexp_extract('hello_world', '([a-z ]+)_?', 1) | hello |

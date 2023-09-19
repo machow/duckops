@@ -1,0 +1,9 @@
+# dt.make_date { #duckops.dt.make_date }
+
+`dt.make_date(col0, col1, col2)`
+
+The date for the given parts
+
+| duckdb example | result |
+| -------------- | ------ |
+| make_date(1992, 9, 20) | 1992-09-20 |

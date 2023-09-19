@@ -5,8 +5,8 @@ from siuba.sql.dialects.duckdb import DuckdbColumn
 from sqlalchemy import sql
 from sqlalchemy import types as sa_types
 from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.dialects.postgresql import array
 
-from functools import singledispatch, singledispatchmethod
 from itertools import chain
 
 
@@ -15,69 +15,34 @@ from itertools import chain
 from siuba.siu import Call
 
 
-class Data:
+class Data(Call):
     func = "__data__"
 
     def map_subcalls(self, f, args=tuple(), kwargs=None):
         return self.args, {}
 
     def __call__(self, x):
-        return self
+        return self.to_sqla()
 
 
 # Interval --------------------------------------------------------------------
 
 
-@symbolic_dispatch(cls=DuckdbColumn)
-def interval(
-    codata: DuckdbColumn,
-    value: "str | None" = None,
-    years=0,
-    months=0,
-    days=0,
-    hours=0,
-    minutes=0,
-    seconds=0,
-    milliseconds=0,
-    microseconds=0,
-):
-    if value is not None:
-        return SAInterval(value)
+class SAInterval(sql.expression.ColumnClause):
+    type = sa_types.Interval()
 
-    units = {
-        "years",
-        "months",
-        "days",
-        "hours",
-        "minutes",
-        "seconds",
-        "milliseconds",
-        "microseconds",
-    }
-    vals = " ".join(
-        chain(*[(str(v), k) for k, v in locals().items() if k in units if v != 0])
-    )
-
-    return SAInterval(vals)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-# New types ----
+@compiles(SAInterval)
+def _(element, compiler, **kw):
+    return f"INTERVAL '{element.name}'"
 
 
-class Varchar:
-    def __init__(self, s: str):
-        self._d = s
+class Interval(Data):
+    sa_type = sa_types.Interval
 
-    def __array__(self, dtype=None):
-        import numpy as np
-
-        return np.array([self._d], dtype=dtype)
-
-
-# ----
-
-
-class Interval(Data, Call):
     def __init__(self, func, n, unit=None):
         if unit is None:
             n, unit = func, n
@@ -101,69 +66,52 @@ class Interval(Data, Call):
     def from_int(cls, period: str, x: int):
         return cls(x, period)
 
-    @singledispatchmethod
-    def convert(self, codata):
-        raise NotImplementedError(f"{type(codata)}")
-
-    @convert.register(DuckdbColumn)
-    def _(self, codata):
-        return interval(codata, **{self.unit: self.n})
-
-
-class SAInterval(sql.expression.ColumnClause):
-    type = sa_types.Interval()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @classmethod
-    def from_int(cls, period: str, x: int):
-        return cls(f"{x} {period}")
-
-
-class SANamedArg(sql.expression.ClauseElement):
-    is_clause_element = True
-
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-
-@compiles(SAInterval)
-def _(element, compiler, **kw):
-    return f"INTERVAL '{element.name}'"
-
-
-@compiles(SANamedArg)
-def _(element, compiler, **kw):
-    compiled_val = compiler.compile(element.value)
-    return f"{element.name} := {compiled_val}"
-
-
-@singledispatch
-def _sql_from(type_, el):
-    raise NotImplementedError(f"Unsupported type: {type(type_)}")
+    def to_sqla(self):
+        return interval(DuckdbColumn(), **{self.unit: self.n})
 
 
 @symbolic_dispatch(cls=DuckdbColumn)
-def cast(codata: DuckdbColumn, el, type_):
-    if not isinstance(type_, object):
-        return _sql_from(type_(), el)
+def interval(
+    codata: DuckdbColumn,
+    years: int = 0,
+    months: int = 0,
+    days: int = 0,
+    hours: int = 0,
+    minutes: int = 0,
+    seconds: int = 0,
+    milliseconds: int = 0,
+    microseconds: int = 0,
+):
 
-    return _sql_from(type_, el)
+    units = {
+        "years",
+        "months",
+        "days",
+        "hours",
+        "minutes",
+        "seconds",
+        "milliseconds",
+        "microseconds",
+    }
+    vals = " ".join(
+        chain(*[(str(v), k) for k, v in locals().items() if k in units if v != 0])
+    )
+
+    return SAInterval(vals)
 
 
-# @_sql_from.register
-# def _(type_: DateTime, el):
-#    return sql.cast(el, sa_types.DateTime())
-#
-#
-# @_sql_from.register
-# def _(type_: Date, el):
-#    return sql.cast(el, sa_types.Date())
-#
+# List ------------------------------------------------
 
 
-@_sql_from.register
-def _(type_: SAInterval, el):
-    return sql.cast(el, sa_types.Interval())
+class List(Data):
+    sa_type = sa_types.ARRAY
+
+    def __init__(self, func, *args):
+        if isinstance(func, str) and func == "__data__":
+            self.args = args
+
+        else:
+            self.args = (func, *args)
+
+    def to_sqla(self):
+        return array(self.args)

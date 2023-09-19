@@ -1,2 +1,25 @@
 project:
   type: website
+
+
+website:
+  title: "Docs"
+  navbar:
+    left:
+      #- design.qmd
+      - href: get-started/overview.qmd
+        text: Get started
+      - href: api/
+        text: API
+  sidebar:
+    - id: get-started
+      contents:
+        - get-started/overview.qmd
+        - get-started/advanced-programming.qmd
+        - get-started/challenges.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true

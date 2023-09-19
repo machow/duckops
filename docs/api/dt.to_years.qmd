@@ -1,0 +1,9 @@
+# dt.to_years { #duckops.dt.to_years }
+
+`dt.to_years(col0)`
+
+Construct a year interval
+
+| duckdb example | result |
+| -------------- | ------ |
+| to_years(5) | INTERVAL 5 YEAR |

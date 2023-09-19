@@ -1,0 +1,9 @@
+# dt.to_days { #duckops.dt.to_days }
+
+`dt.to_days(col0)`
+
+Construct a day interval
+
+| duckdb example | result |
+| -------------- | ------ |
+| to_days(5) | INTERVAL 5 DAY |

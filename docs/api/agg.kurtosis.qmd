@@ -1,0 +1,9 @@
+# agg.kurtosis { #duckops.agg.kurtosis }
+
+`agg.kurtosis(col0)`
+
+Returns the excess kurtosis of all input values.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

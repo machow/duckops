@@ -1,0 +1,7 @@
+# unknown.subtract { #duckops.unknown.subtract }
+
+`unknown.subtract(col0)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

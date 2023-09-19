@@ -1,0 +1,9 @@
+# dt.millennium { #duckops.dt.millennium }
+
+`dt.millennium(col0)`
+
+Millennium
+
+| duckdb example | result |
+| -------------- | ------ |
+| millennium(date '1992-02-15') | 2 |

@@ -1,0 +1,9 @@
+# json.json_extract_string { #duckops.json.json_extract_string }
+
+`json.json_extract_string(col0, col1)`
+
+Extract VARCHAR from json at the given path. If path is a LIST, the result will be a LIST of VARCHAR
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

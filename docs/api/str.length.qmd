@@ -1,0 +1,9 @@
+# str.length { #duckops.str.length }
+
+`str.length(col0)`
+
+Number of characters in string
+
+| duckdb example | result |
+| -------------- | ------ |
+| length('Hello🦆') | 6 |

@@ -1,0 +1,9 @@
+# nested.row { #duckops.nested.row }
+
+`nested.row(*args)`
+
+Create a STRUCT containing the argument values. If the values are column references, the entry name will be the column name; otherwise it will be the string 'vN' where N is the (1-based) position of the argument.
+
+| duckdb example | result |
+| -------------- | ------ |
+| row(i, i % 4, i / 4) | {'i': 3, 'v2': 3, 'v3': 0} |

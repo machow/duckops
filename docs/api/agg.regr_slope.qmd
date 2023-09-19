@@ -1,0 +1,9 @@
+# agg.regr_slope { #duckops.agg.regr_slope }
+
+`agg.regr_slope(col0, col1)`
+
+Returns the slope of the linear regression line for non-null pairs in a group.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

@@ -1,0 +1,9 @@
+# dt.current_date { #duckops.dt.current_date }
+
+`dt.current_date()`
+
+Current date (at start of current transaction)
+
+| duckdb example | result |
+| -------------- | ------ |
+| current_date | 2022-10-08 |

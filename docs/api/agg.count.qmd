@@ -1,0 +1,9 @@
+# agg.count { #duckops.agg.count }
+
+`agg.count(col0)`
+
+Calculates the number of tuples tuples in arg.
+
+| duckdb example | result |
+| -------------- | ------ |
+| count(A) | nan |

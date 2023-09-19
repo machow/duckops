@@ -1,0 +1,9 @@
+# dt.generate_series { #duckops.dt.generate_series }
+
+`dt.generate_series(col0)`
+
+Generate a table of timestamps in the closed range, stepping by the interval
+
+| duckdb example | result |
+| -------------- | ------ |
+| generate_series(TIMESTAMP '2001-04-10', TIMESTAMP '2001-04-11', INTERVAL 30 MINUTE) | nan |

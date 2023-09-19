@@ -1,0 +1,9 @@
+# dt.datetrunc { #duckops.dt.datetrunc }
+
+`dt.datetrunc(col0, col1)`
+
+Alias of date_trunc. Truncate to specified precision
+
+| duckdb example | result |
+| -------------- | ------ |
+| datetrunc('month', DATE '1992-03-07') | 1992-03-01 |

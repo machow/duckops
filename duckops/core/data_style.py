@@ -4,7 +4,7 @@ from functools import singledispatch
 
 from siuba.siu import Symbolic, Call
 from duckops._types import Interval
-from duckops.core._type_backends import PdSeries, PlSeries, SqlaClauseElement, SbLazy
+from duckops.core._databackends import PdSeries, PlSeries, SqlaClauseElement, SbLazy
 
 from datetime import datetime, timedelta, date
 

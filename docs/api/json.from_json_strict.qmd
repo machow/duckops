@@ -1,0 +1,9 @@
+# json.from_json_strict { #duckops.json.from_json_strict }
+
+`json.from_json_strict(col0, col1)`
+
+Alias for json_transform_strict
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

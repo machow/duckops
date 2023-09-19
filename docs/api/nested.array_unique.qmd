@@ -1,0 +1,9 @@
+# nested.array_unique { #duckops.nested.array_unique }
+
+`nested.array_unique(col0)`
+
+Alias for list_unique.
+
+| duckdb example | result |
+| -------------- | ------ |
+| array_unique([1, 1, NULL, -3, 1, 5]) | 3 |

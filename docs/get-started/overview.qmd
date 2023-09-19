@@ -1,0 +1,217 @@
+---
+title: Overview
+jupyter:
+  kernel: python3
+format:
+  html:
+    toc-depth: 3
+    toc-expand: 3
+aliases:
+  - ../index.html
+---
+
+<img width="30%" align="right" src="/assets/hex.jpg">
+
+The `duckops` package is an API for duckdb, which allows you to call duckdb functions directly from python. It also supports more advanced query generation using [siuba](https://siuba.org). Importantly, `siuba` is just one implementation. `duckops` is [designed to be extended](#new-backends)!
+
+<br>
+<br>
+<br>
+<br>
+
+:::{.callout-warning}
+duckops is 🔬highly experimental🔬. Use it to explore the beautiful dream of composable duckdb functions. Tell us what you want it to do. Expect it to change!
+:::
+
+## The challenge
+
+duckdb is an incredibly powerful tool.
+It can read from many places (e.g. cloud buckets), and even analyze pandas or polars DataFrames.
+
+But in python you probably end up writing SQL queries inside strings:
+
+```{python}
+import duckdb
+
+duckdb.execute("""
+    SELECT concat('a', 'b', 'c')
+""").df()
+```
+
+With `duckops` functions like `concat` are importable:
+
+```{python}
+from duckops.str import concat
+
+concat("a", "b", "c")
+```
+
+This makes them easy to find, provide documentation, and use type hints.
+
+## Install
+
+
+duckops can be installed using pip.
+
+```bash
+pip install duckops
+```
+
+
+## Explore
+
+### Functions everywhere
+
+#### Test things super fast.
+
+```{python}
+from duckops.str import concat
+
+concat("a", "b", "c")
+```
+
+
+#### Get nice docs
+
+```{python}
+help(concat)
+```
+
+### Tab around and find out
+
+```{.python}
+import duckops as dop
+
+dop.str.<tab>
+```
+
+### Use programmatically
+
+```{python}
+from functools import partial
+from duckops.str import concat_ws
+
+tab_concat = partial(concat_ws, "-")
+tab_concat("a", "b", "c")
+```
+
+
+### Run on pandas, polars, etc..
+
+::: panel-tabset
+#### polars
+
+```{python}
+import polars as pl
+
+ser = pl.Series(["a", "b", "c"])
+
+concat(ser, "x")
+
+```
+
+#### pandas
+
+```{python}
+import pandas as pd
+
+ser = pd.Series(["a", "b", "c"])
+
+concat(ser, "x")
+```
+
+:::
+
+
+## Query
+
+See [siuba.org](https://siuba.org) for building queries.
+
+### Big example
+
+```{python}
+from duckops.helpers import to_duckdb
+from duckops.all import mean, stddev
+
+from siuba import _, select, group_by, summarize, across, Fx
+from siuba.data import penguins
+
+expr_measures = _.startswith("bill")
+
+(
+    to_duckdb(penguins, "penguins")
+    >> select(_.species, _.island, expr_measures)
+    >> group_by(_.species, _.island)
+    >> summarize(across(expr_measures, {"mean": mean(Fx), "std": stddev(Fx)}))
+)
+
+```
+
+
+
+### Pipe chains
+
+One big challenge of functions is that calling one function on the result of another can create a hard-to-read sandwich of code.
+
+```{python}
+from duckops.all import list_aggr, string_split, upper
+
+list_aggr(
+    string_split(
+        upper("Make it so"),
+        " "
+    ),
+    "string_agg",
+    "."
+)
+```
+
+siuba addresses this by enabling function pipes, using the `>>` operator.
+
+```{python}
+("Make it so"
+  >> upper(_)
+  >> string_split(_, " ")
+  >> list_aggr(_, "string_agg", ".")
+)
+```
+
+
+## Extend
+
+### New backends
+
+```{python}
+class RadSeries():
+    def __init__(self, d: list):
+        self.d = d
+```
+
+```{python}
+
+# setup ----
+
+from duckops.core.data_style import IsConcrete, data_style
+
+
+class IsConcreteRad(IsConcrete): ...
+
+@data_style.register
+def _ds_rad(arg: RadSeries): return IsConcreteRad()
+
+
+
+# implementation ----
+
+from duckops.str import contains
+
+
+@contains.register
+def _contains_rad(codata: IsConcreteRad, data, search_string):
+    return [search_string in x for x in data.d]
+
+```
+
+```{python}
+contains(RadSeries(["abc", "xyz"]), "y")
+```

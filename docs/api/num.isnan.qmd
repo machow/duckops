@@ -1,0 +1,9 @@
+# num.isnan { #duckops.num.isnan }
+
+`num.isnan(col0)`
+
+Returns true if the floating point value is not a number, false otherwise
+
+| duckdb example | result |
+| -------------- | ------ |
+| isnan('NaN'::float) | true |

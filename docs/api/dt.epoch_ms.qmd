@@ -1,0 +1,9 @@
+# dt.epoch_ms { #duckops.dt.epoch_ms }
+
+`dt.epoch_ms(col0)`
+
+Converts ms since epoch to a timestamp
+
+| duckdb example | result |
+| -------------- | ------ |
+| epoch_ms(701222400000) | 1992-03-22 00:00:00 |

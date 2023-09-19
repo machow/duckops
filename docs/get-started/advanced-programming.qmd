@@ -1,0 +1,418 @@
+---
+title: Advanced programming
+jupyter:
+  kernel: python3
+---
+
+```{python}
+from sqlalchemy import create_engine
+import pandas as pd
+from siuba import *
+from siuba.experimental.pivot import pivot_wider, pivot_longer
+
+import duckops
+import duckops.all as dop
+
+from duckops.syntax import extract, lam
+from duckops.helpers import query_to_tbl, tbl_empty
+
+
+engine = create_engine("duckdb:///:memory:")
+```
+
+
+
+## Re-usable column aliases
+
+```{.sql}
+SELECT
+     'These are the voyages of the starship Enterprise...' AS intro,
+     instr(intro, 'starship') AS starship_loc,
+     substr(intro, starship_loc + len('starship') + 1) AS trimmed_intro;
+```
+
+
+```{python}
+
+(
+    tbl_empty()
+    >> mutate(
+        intro = "These are the voyages of the starship Enterprise...",
+        starship_loc = dop.instr(_.intro, "starship"),
+        trimmed_intro = dop.substring(_.intro, _.starship_loc + dop.len("starship") + 1)
+    )
+)
+
+```
+
+
+## Dynamic column selection
+
+```{.sql}
+INSTALL httpfs;
+LOAD httpfs;
+CREATE TABLE trek_facts AS
+    SELECT * FROM 'https://raw.githubusercontent.com/Alex-Monahan/example_datasets/main/Star_Trek-Season_1.csv';
+
+DESCRIBE trek_facts;
+```
+
+```{.sql}
+SELECT
+    episode_num,
+    COLUMNS('.*warp.*')
+FROM trek_facts;
+```
+
+```{.sql}
+SELECT
+    MAX(COLUMNS('.*warp.*'))
+FROM trek_facts;
+```
+
+```{python}
+trek_facts = pd.read_csv("./data/star_trek-season_1.csv")
+
+tbl_trek_facts = tbl(engine, "trek_facts", trek_facts)
+
+(
+    tbl_trek_facts
+    >> select(_.episode_num, _.contains("warp"))
+)
+```
+
+```{python}
+(
+    tbl_trek_facts
+    >> summarize(across(_.contains("warp"), dop.max(Fx)))
+)
+```
+
+```{.sql}
+SELECT
+    episode_num,
+    COLUMNS('.*warp.*')
+FROM trek_facts
+WHERE
+    COLUMNS('.*warp.*') >= 2;
+    -- cnt_warp_speed_orders >= 2
+    -- AND
+    -- highest_warp_speed_issued >= 2
+```
+
+```{python}
+expr_warp_cols = _.contains("warp")
+
+(
+    tbl_trek_facts
+    >> select(expr_warp_cols)
+    >> filter(across(expr_warp_cols, Fx >= 2))
+)
+```
+
+
+## Columns() with EXCLUDE and Replace
+
+### Exclude
+
+```{.sql}
+SELECT
+    MAX(COLUMNS(* EXCLUDE season_num))
+FROM trek_facts;
+```
+
+```{python}
+(
+    tbl_trek_facts
+    >> select(_.contains(""), -_.season_num)
+    >> summarize(across(_.contains(""), dop.max(Fx)))
+)
+```
+
+### Replace
+
+```{.sql}
+SELECT
+    MAX(COLUMNS(* REPLACE aired_date::timestamp AS aired_date))
+FROM trek_facts;
+```
+
+```{python}
+from siuba.sql import sql_raw
+
+(
+    tbl_trek_facts
+    # TODO: handle casting
+    >> mutate(aired_date = sql_raw("aired_date::timestamp"))
+    >> summarize(across(_.contains(""), dop.max(Fx)))
+)
+```
+
+
+## Columns with lambda functions
+
+```{.sql}
+SELECT
+    episode_num,
+    COLUMNS(col -> col LIKE '%warp%')
+FROM trek_facts
+WHERE
+    COLUMNS(col -> col LIKE '%warp%') >= 2;
+```
+
+
+```{python}
+expr_like_warp = _.contains("warp")
+
+(
+    tbl_trek_facts
+    >> select(_.episode_num, expr_like_warp)
+    >> filter(across(expr_like_warp, Fx >= 2))
+)
+```
+
+## Automatic JSON to nested type conversion
+
+```{.sql}
+INSTALL httpfs;
+LOAD httpfs;
+INSTALL json;
+LOAD json;
+
+SELECT
+     starfleet[10].model AS starship
+FROM 'https://raw.githubusercontent.com/vlad-saling/star-trek-ipsum/master/src/content/content.json';
+```
+
+```{python}
+import duckdb
+
+duckdb.execute("""
+INSTALL httpfs;
+LOAD httpfs;
+INSTALL json;
+LOAD json;
+
+SELECT
+     *
+FROM 'https://raw.githubusercontent.com/vlad-saling/star-trek-ipsum/master/src/content/content.json';
+""").df()
+
+```
+
+```{python}
+with engine.begin() as conn:
+    conn.exec_driver_sql("""
+INSTALL httpfs;
+LOAD httpfs;
+INSTALL json;
+LOAD json;
+""")
+
+tbl_star_trek_ipsum = (
+    query_to_tbl(engine, """
+      SELECT
+          *
+      FROM 'https://raw.githubusercontent.com/vlad-saling/star-trek-ipsum/master/src/content/content.json'
+      """
+    )
+)
+
+(
+    tbl_star_trek_ipsum
+    >> mutate(starship = dop.json_extract_string(_.starfleet, "$[10].model"))
+)
+```
+
+## Function chaining
+
+```{.sql}
+SELECT
+     ('Make it so')
+          .UPPER()
+          .string_split(' ')
+          .list_aggr('string_agg','.')
+          .concat('.') AS im_not_messing_around_number_one;
+```
+
+```{python}
+# Symbol >> Symbol is returning a PipeCall, not Symbol[PipeCall], which is wrong
+q = (
+    tbl_empty()
+    >> mutate(
+      x = "Make it so",
+      res = dop.upper(_.x)
+        >> dop.string_split(_, " ")
+        >> dop.list_aggr(_, "string_agg", ".")
+        >> dop.concat(_, ".")
+    )
+    >> show_query()
+)
+```
+
+## Dynamic PIVOT and UNPIVOT
+
+```{.sql}
+CREATE TABLE purchases (item VARCHAR, year INT, count INT);
+
+INSERT INTO purchases
+    VALUES ('phasers', 2155, 1035), ('phasers', 2156, 25039), ('phasers', 2157, 95000),
+           ('photon torpedoes', 2155, 255), ('photon torpedoes', 2156, 17899), ('photon torpedoes', 2157, 87492);
+
+FROM purchases;
+```
+
+```{.sql}
+CREATE TABLE pivoted_purchases AS
+     PIVOT purchases
+          ON year
+          USING SUM(count)
+          GROUP BY item;
+
+FROM pivoted_purchases;
+```
+
+
+```{python}
+with engine.begin() as conn:
+    conn.exec_driver_sql("""
+CREATE TABLE purchases (item VARCHAR, year INT, count INT);
+
+INSERT INTO purchases
+    VALUES ('phasers', 2155, 1035), ('phasers', 2156, 25039), ('phasers', 2157, 95000),
+           ('photon torpedoes', 2155, 255), ('photon torpedoes', 2156, 17899), ('photon torpedoes', 2157, 87492);
+
+FROM purchases;
+""")
+
+```
+
+```{python}
+tbl_purchases = tbl(engine, "purchases")
+
+tbl_pivoted_purchases = (
+    tbl_purchases
+    >> pivot_wider(names_from=_.year, values_from=_.count)
+    >> show_query()
+)
+
+```
+
+
+```{.sql}
+UNPIVOT pivoted_purchases
+     ON COLUMNS(* EXCLUDE item)
+     INTO
+          NAME year
+          VALUE count;
+```
+
+```{python}
+tbl_pivoted_purchases >> pivot_longer(-_.item)
+```
+
+
+## List lambda functions
+
+```{.sql}
+SELECT
+     (['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'])
+          .list_transform(x -> x.string_split(' ')[1]) AS short_name;
+```
+
+```{python}
+q = (
+  tbl_empty()
+  >> mutate(
+      name = ['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'],
+      short_name = dop.list_transform(
+          _["name"],
+          lam(dop.string_split(Fx, " ") >> extract(_, 1))
+      )
+  )
+  >> show_query()
+)
+```
+
+```{.sql}
+SELECT
+     (['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'])
+          .list_filter(x -> x.contains('1701')) AS the_original;
+```
+
+```{python}
+(
+    tbl_empty()
+    >> mutate(
+        name = ['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'],
+        the_original = dop.list_filter(
+            _["name"],
+            lam(dop.contains(Fx, "1701"))
+        )
+    )
+    >> show_query()
+)
+```
+
+## List comprehensions
+
+```{.sql}
+SELECT
+     [x.string_split(' ')[1]
+     FOR x IN ['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031']
+     IF x.contains('1701')] AS ready_to_boldly_go;
+```
+
+```{python}
+from duckops.syntax import list_comp
+(
+    tbl_empty()
+    >> mutate(
+        ships = ['Enterprise NCC-1701', 'Voyager NCC-74656', 'Discovery NCC-1031'],
+        res = list_comp(
+            _.ships,
+            dop.string_split(Fx, " ") >> extract(_, 1),
+            dop.contains(Fx, "1701")
+        )
+    )
+)
+
+```
+
+## Unimplemented
+
+## Union by name 🚧
+
+```{.sql}
+CREATE TABLE proverbs AS
+     SELECT
+          'Revenge is a dish best served cold' AS klingon_proverb
+     UNION ALL BY NAME
+     SELECT
+          'You will be assimilated' AS borg_proverb,
+          'If winning is not important, why keep score?' AS klingon_proverb;
+
+FROM proverbs;
+```
+
+## Exploding struct.*
+
+
+## Automatic struct creation
+
+```{.sql}
+WITH officers AS (
+     SELECT 'Captain' AS rank, 'Jean-Luc Picard' AS name
+     UNION ALL
+     SELECT 'Lieutenant Commander', 'Data'
+)
+FROM officers
+SELECT officers;
+```
+
+
+## Union data type
+
+## From first in select statements
+
+💀

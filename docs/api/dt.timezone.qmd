@@ -1,0 +1,9 @@
+# dt.timezone { #duckops.dt.timezone }
+
+`dt.timezone(col0)`
+
+Use the date parts of the timestamp in GMT to construct a timestamp in the given time zone. Effectively, the argument is a “local” time.
+
+| duckdb example | result |
+| -------------- | ------ |
+| timezone('America/Denver', TIMESTAMP '2001-02-16 20:38:40') | 2001-02-16 19:38:40-08 |

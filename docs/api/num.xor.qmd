@@ -1,0 +1,9 @@
+# num.xor { #duckops.num.xor }
+
+`num.xor(col0, col1)`
+
+bitwise XOR
+
+| duckdb example | result |
+| -------------- | ------ |
+| xor(17, 5) | 20 |

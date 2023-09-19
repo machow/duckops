@@ -1,0 +1,9 @@
+# str.reverse { #duckops.str.reverse }
+
+`str.reverse(col0)`
+
+Reverses the string
+
+| duckdb example | result |
+| -------------- | ------ |
+| reverse('hello') | olleh |

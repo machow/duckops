@@ -1,0 +1,9 @@
+# dt.microsecond { #duckops.dt.microsecond }
+
+`dt.microsecond(col0)`
+
+Sub-minute microseconds
+
+| duckdb example | result |
+| -------------- | ------ |
+| microsecond(timestamp '2021-08-03 11:59:44.123456') | 44123456 |

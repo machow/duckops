@@ -1,0 +1,9 @@
+# str.trim { #duckops.str.trim }
+
+`str.trim(col0)`
+
+Removes any spaces from either side of the string
+
+| duckdb example | result |
+| -------------- | ------ |
+| trim('␣␣␣␣test␣␣') | test |

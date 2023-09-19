@@ -1,0 +1,9 @@
+# agg.list { #duckops.agg.list }
+
+`agg.list(col0)`
+
+Returns a LIST containing all the values of a column.
+
+| duckdb example | result |
+| -------------- | ------ |
+| list(A) | nan |

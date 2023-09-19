@@ -1,0 +1,9 @@
+# str.string_split { #duckops.str.string_split }
+
+`str.string_split(col0, col1)`
+
+Splits the string along the separator
+
+| duckdb example | result |
+| -------------- | ------ |
+| string_split('hello␣world', '␣') | ['hello', 'world'] |

@@ -1,0 +1,9 @@
+# agg.median { #duckops.agg.median }
+
+`agg.median(col0)`
+
+Returns the middle value of the set. NULL values are ignored. For even value counts, quantitiative values are averaged and ordinal values return the lower value.
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

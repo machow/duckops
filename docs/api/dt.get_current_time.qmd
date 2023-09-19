@@ -1,0 +1,9 @@
+# dt.get_current_time { #duckops.dt.get_current_time }
+
+`dt.get_current_time()`
+
+Current time (start of current transaction)
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

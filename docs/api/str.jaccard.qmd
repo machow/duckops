@@ -1,0 +1,9 @@
+# str.jaccard { #duckops.str.jaccard }
+
+`str.jaccard(col0, col1)`
+
+The Jaccard similarity between two strings. Different case is considered different. Returns a number between 0 and 1.
+
+| duckdb example | result |
+| -------------- | ------ |
+| jaccard('duck','luck') | 0.6 |

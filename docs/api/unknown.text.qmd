@@ -1,0 +1,7 @@
+# unknown.text { #duckops.unknown.text }
+
+`unknown.text(col0, col1)`
+
+| duckdb example | result |
+| -------------- | ------ |
+| nan | nan |

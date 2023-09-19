@@ -1,0 +1,9 @@
+# agg.product { #duckops.agg.product }
+
+`agg.product(col0)`
+
+Calculates the product of all tuples in arg
+
+| duckdb example | result |
+| -------------- | ------ |
+| product(A) | nan |

@@ -1,0 +1,9 @@
+# dt.current_localtimestamp { #duckops.dt.current_localtimestamp }
+
+`dt.current_localtimestamp()`
+
+Returns a TIMESTAMP whose GMT bin values correspond to local date and time in the current time zone.
+
+| duckdb example | result |
+| -------------- | ------ |
+| current_localtimestamp() | 2022-12-17 08:47:56.497 |

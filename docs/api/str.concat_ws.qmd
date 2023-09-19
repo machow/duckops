@@ -1,0 +1,9 @@
+# str.concat_ws { #duckops.str.concat_ws }
+
+`str.concat_ws(col0, col1, *args)`
+
+Concatenate strings together separated by the specified separator
+
+| duckdb example | result |
+| -------------- | ------ |
+| concat_ws(',', 'Banana', 'Apple', 'Melon') | Banana,Apple,Melon |

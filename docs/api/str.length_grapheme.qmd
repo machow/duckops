@@ -1,0 +1,9 @@
+# str.length_grapheme { #duckops.str.length_grapheme }
+
+`str.length_grapheme(col0)`
+
+Number of grapheme clusters in string
+
+| duckdb example | result |
+| -------------- | ------ |
+| length_grapheme('🤦🏼‍♂️🤦🏽‍♀️') | 2 |

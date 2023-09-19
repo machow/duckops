@@ -1,0 +1,9 @@
+# num.floor { #duckops.num.floor }
+
+`num.floor(col0)`
+
+rounds the number down
+
+| duckdb example | result |
+| -------------- | ------ |
+| floor(17.4) | 17 |

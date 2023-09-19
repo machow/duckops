@@ -37,6 +37,7 @@ dev = [
   "pytest",
   "pytest-dotenv",
   "polars",
+  "jupyter",
 ]
 
 

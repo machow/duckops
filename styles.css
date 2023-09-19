@@ -1,0 +1,12 @@
+/* css styles */
+
+td:first-child {
+    text-wrap: nowrap;
+    text-size-adjust: 100%;
+  
+  }
+  
+  
+  td:first-child a {
+    word-break: normal;
+  }

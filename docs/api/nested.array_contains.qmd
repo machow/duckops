@@ -1,9 +1,0 @@
-# nested.array_contains { #duckops.nested.array_contains }
-
-`nested.array_contains(col0, col1)`
-
-Alias for list_contains.
-
-| duckdb example | result |
-| -------------- | ------ |
-| array_contains([1, 2, NULL], 1) | true |

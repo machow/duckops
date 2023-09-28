@@ -3,10 +3,15 @@ from __future__ import annotations
 
 from typing import overload, TYPE_CHECKING
 from duckops.core.dispatch import create_generic, register_agg
-from duckops.core.data_style import *
 
 if TYPE_CHECKING:
+    from duckops.core.data_style import *
     from typing import overload as create_generic
+else:
+    # TODO: for some reason griffe has trouble analyzing
+    # the module without this else clause
+    from duckops.core.dispatch import create_generic
+
 
 
 

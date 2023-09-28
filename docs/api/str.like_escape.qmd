@@ -1,9 +1,0 @@
-# str.like_escape { #duckops.str.like_escape }
-
-`str.like_escape(col0, col1, col2)`
-
-Returns true if the string matches the like_specifier (see Pattern Matching). escape_character is used to search for wildcard characters in the string.
-
-| duckdb example | result |
-| -------------- | ------ |
-| like_escape('a%c', 'a$%c', '$') | true |

@@ -1,9 +1,0 @@
-# agg.approx_quantile { #duckops.agg.approx_quantile }
-
-`agg.approx_quantile(col0, col1)`
-
-Gives the approximate quantile using T-Digest.
-
-| duckdb example | result |
-| -------------- | ------ |
-| approx_quantile(A,0.5) | nan |

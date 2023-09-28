@@ -1,9 +1,0 @@
-# agg.bool_or { #duckops.agg.bool_or }
-
-`agg.bool_or(col0)`
-
-Returns TRUE if any input value is TRUE, otherwise FALSE.
-
-| duckdb example | result |
-| -------------- | ------ |
-| bool_or(A) | nan |

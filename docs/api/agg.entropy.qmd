@@ -1,9 +1,0 @@
-# agg.entropy { #duckops.agg.entropy }
-
-`agg.entropy(col0)`
-
-Returns the log-2 entropy of count input-values.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

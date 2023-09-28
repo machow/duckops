@@ -1,9 +1,0 @@
-# nested.list_concat { #duckops.nested.list_concat }
-
-`nested.list_concat(col0, col1)`
-
-Concatenates two lists.
-
-| duckdb example | result |
-| -------------- | ------ |
-| list_concat([2, 3], [4, 5, 6]) | [2, 3, 4, 5, 6] |

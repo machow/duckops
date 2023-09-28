@@ -1,9 +1,0 @@
-# dt.dayofweek { #duckops.dt.dayofweek }
-
-`dt.dayofweek(col0)`
-
-Numeric weekday (Sunday = 0, Saturday = 6)
-
-| duckdb example | result |
-| -------------- | ------ |
-| dayofweek(date '1992-02-15') | 6 |

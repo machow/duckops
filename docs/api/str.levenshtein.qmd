@@ -1,9 +1,0 @@
-# str.levenshtein { #duckops.str.levenshtein }
-
-`str.levenshtein(col0, col1)`
-
-The minimum number of single-character edits (insertions, deletions or substitutions) required to change one string to the other. Different case is considered different.
-
-| duckdb example | result |
-| -------------- | ------ |
-| levenshtein('duck','db') | 3.0 |

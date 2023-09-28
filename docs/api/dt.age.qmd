@@ -1,9 +1,0 @@
-# dt.age { #duckops.dt.age }
-
-`dt.age(col0)`
-
-Subtract arguments, resulting in the time difference between the two timestamps
-
-| duckdb example | result |
-| -------------- | ------ |
-| age(TIMESTAMP '2001-04-10', TIMESTAMP '1992-09-20') | 8 years 6 months 20 days |

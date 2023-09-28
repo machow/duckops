@@ -1,9 +1,0 @@
-# nested.array_distinct { #duckops.nested.array_distinct }
-
-`nested.array_distinct(col0)`
-
-Alias for list_distinct.
-
-| duckdb example | result |
-| -------------- | ------ |
-| array_distinct([1, 1, NULL, -3, 1, 5]) | [1, 5, -3] |

@@ -1,7 +1,0 @@
-# unknown.enum_range_boundary { #duckops.unknown.enum_range_boundary }
-
-`unknown.enum_range_boundary(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

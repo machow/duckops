@@ -1,9 +1,0 @@
-# agg.favg { #duckops.agg.favg }
-
-`agg.favg(col0)`
-
-Calculates the average using a more accurate floating point summation (Kahan Sum).
-
-| duckdb example | result |
-| -------------- | ------ |
-| favg(A) | nan |

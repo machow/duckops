@@ -1,9 +1,0 @@
-# agg.corr { #duckops.agg.corr }
-
-`agg.corr(col0, col1)`
-
-Returns the correlation coefficient for non-null pairs in a group.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

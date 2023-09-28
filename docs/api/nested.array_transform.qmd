@@ -1,9 +1,0 @@
-# nested.array_transform { #duckops.nested.array_transform }
-
-`nested.array_transform(col0, col1)`
-
-Alias for list_transform.
-
-| duckdb example | result |
-| -------------- | ------ |
-| array_transform(l, x -> x + 1) | [5, 6, 7] |

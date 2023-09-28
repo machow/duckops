@@ -1,9 +1,0 @@
-# nested.array_concat { #duckops.nested.array_concat }
-
-`nested.array_concat(col0, col1)`
-
-Alias for list_concat.
-
-| duckdb example | result |
-| -------------- | ------ |
-| array_concat([2, 3], [4, 5, 6]) | [2, 3, 4, 5, 6] |

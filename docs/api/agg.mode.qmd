@@ -1,9 +1,0 @@
-# agg.mode { #duckops.agg.mode }
-
-`agg.mode(col0)`
-
-Returns the most frequent value for the values within x. NULL values are ignored.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

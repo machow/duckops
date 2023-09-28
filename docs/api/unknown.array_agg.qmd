@@ -1,7 +1,0 @@
-# unknown.array_agg { #duckops.unknown.array_agg }
-
-`unknown.array_agg(col0)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

@@ -1,9 +1,0 @@
-# nested.union_value { #duckops.nested.union_value }
-
-`nested.union_value(*args)`
-
-Create a single member UNION containing the argument value. The tag of the value will be the bound variable name.
-
-| duckdb example | result |
-| -------------- | ------ |
-| union_value(k := 'hello') | 'hello'::UNION(k VARCHAR) |

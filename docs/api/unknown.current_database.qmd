@@ -1,7 +1,0 @@
-# unknown.current_database { #duckops.unknown.current_database }
-
-`unknown.current_database()`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

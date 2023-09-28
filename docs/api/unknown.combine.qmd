@@ -1,7 +1,0 @@
-# unknown.combine { #duckops.unknown.combine }
-
-`unknown.combine(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

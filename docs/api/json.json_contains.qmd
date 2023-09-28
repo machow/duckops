@@ -1,9 +1,0 @@
-# json.json_contains { #duckops.json.json_contains }
-
-`json.json_contains(col0, col1)`
-
-Returns true if json_needle is contained in json_haystack. Both parameters are of JSON type, but json_needle can also be a numeric value or a string, however the string must be wrapped in double quotes
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

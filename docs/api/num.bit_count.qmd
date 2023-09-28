@@ -1,9 +1,0 @@
-# num.bit_count { #duckops.num.bit_count }
-
-`num.bit_count(col0)`
-
-returns the number of bits that are set
-
-| duckdb example | result |
-| -------------- | ------ |
-| bit_count(31) | 5 |

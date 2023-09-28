@@ -1,6 +1,8 @@
 project:
   type: website
 
+metadata-files:
+  - api/_sidebar.yml
 
 website:
   title: "Docs"
@@ -23,3 +25,32 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
+
+quartodoc:
+  dir: api
+  package: duckops
+  sidebar: api/_sidebar.yml
+  sections:
+    - title: "Aggregations"
+      explode: agg
+
+    - title: "Blobs"
+      explode: blob
+
+    - title: "Datetime"
+      explode: dt
+
+    - title: "JSON"
+      explode: json
+
+    - title: "Nested"
+      explode: nested
+
+    - title: "Numeric"
+      explode: num
+
+    - title: "String"
+      explode: str
+
+    - title: "Unknown"
+      explode: unknown

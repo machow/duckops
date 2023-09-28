@@ -1,9 +1,0 @@
-# str.jaro_similarity { #duckops.str.jaro_similarity }
-
-`str.jaro_similarity(col0, col1)`
-
-The Jaro similarity between two strings. Different case is considered different. Returns a number between 0 and 1.
-
-| duckdb example | result |
-| -------------- | ------ |
-| jaro_similarity('duck','duckdb') | 0.88 |

@@ -1,7 +1,0 @@
-# unknown.current_query { #duckops.unknown.current_query }
-
-`unknown.current_query()`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

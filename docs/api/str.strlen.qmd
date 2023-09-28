@@ -1,9 +1,0 @@
-# str.strlen { #duckops.str.strlen }
-
-`str.strlen(col0)`
-
-Number of bytes in string
-
-| duckdb example | result |
-| -------------- | ------ |
-| strlen('🦆') | 4 |

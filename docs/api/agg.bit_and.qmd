@@ -1,9 +1,0 @@
-# agg.bit_and { #duckops.agg.bit_and }
-
-`agg.bit_and(col0)`
-
-Returns the bitwise AND of all bits in a given expression .
-
-| duckdb example | result |
-| -------------- | ------ |
-| bit_and(A) | nan |

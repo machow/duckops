@@ -1,9 +1,0 @@
-# str.substring_grapheme { #duckops.str.substring_grapheme }
-
-`str.substring_grapheme(col0, col1, col2)`
-
-Extract substring of length grapheme clusters starting from character start. Note that a start value of 1 refers to the first character of the string.
-
-| duckdb example | result |
-| -------------- | ------ |
-| substring_grapheme('🦆🤦🏼‍♂️🤦🏽‍♀️🦆', 3, 2) | 🤦🏽‍♀️🦆 |

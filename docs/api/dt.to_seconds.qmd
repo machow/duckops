@@ -1,9 +1,0 @@
-# dt.to_seconds { #duckops.dt.to_seconds }
-
-`dt.to_seconds(col0)`
-
-Construct a second interval
-
-| duckdb example | result |
-| -------------- | ------ |
-| to_seconds(5) | INTERVAL 5 SECOND |

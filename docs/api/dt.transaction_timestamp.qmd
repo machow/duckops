@@ -1,9 +1,0 @@
-# dt.transaction_timestamp { #duckops.dt.transaction_timestamp }
-
-`dt.transaction_timestamp()`
-
-Current date and time (start of current transaction)
-
-| duckdb example | result |
-| -------------- | ------ |
-| transaction_timestamp() | 2022-10-08 12:44:46.122-07 |

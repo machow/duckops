@@ -1,9 +1,0 @@
-# agg.skewness { #duckops.agg.skewness }
-
-`agg.skewness(col0)`
-
-Returns the skewness of all input values.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

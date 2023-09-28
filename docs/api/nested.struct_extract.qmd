@@ -1,9 +1,0 @@
-# nested.struct_extract { #duckops.nested.struct_extract }
-
-`nested.struct_extract(col0, col1)`
-
-Extract the named entry from the struct.
-
-| duckdb example | result |
-| -------------- | ------ |
-| struct_extract(s, 'i') | 4 |

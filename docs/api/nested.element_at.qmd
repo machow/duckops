@@ -1,9 +1,0 @@
-# nested.element_at { #duckops.nested.element_at }
-
-`nested.element_at(col0, col1, *args)`
-
-Return a list containing the value for a given key or an empty list if the key is not contained in the map. The type of the key provided in the second parameter must match the type of the map’s keys else an error is returned.
-
-| duckdb example | result |
-| -------------- | ------ |
-| element_at(map([100, 5], [42, 43]),100); | [42] |

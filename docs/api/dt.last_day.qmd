@@ -1,9 +1,0 @@
-# dt.last_day { #duckops.dt.last_day }
-
-`dt.last_day(col0)`
-
-The last day of the corresponding month in the date
-
-| duckdb example | result |
-| -------------- | ------ |
-| last_day(DATE '1992-09-20') | 1992-09-30 |

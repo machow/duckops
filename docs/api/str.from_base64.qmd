@@ -1,9 +1,0 @@
-# str.from_base64 { #duckops.str.from_base64 }
-
-`str.from_base64(col0)`
-
-Convert a base64 encoded string to a character string.
-
-| duckdb example | result |
-| -------------- | ------ |
-| from_base64('QQ==') | 'A' |

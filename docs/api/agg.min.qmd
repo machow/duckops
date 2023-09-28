@@ -1,9 +1,0 @@
-# agg.min { #duckops.agg.min }
-
-`agg.min(col0)`
-
-Returns the minumum value present in arg.
-
-| duckdb example | result |
-| -------------- | ------ |
-| min(A) | nan |

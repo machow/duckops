@@ -1,9 +1,0 @@
-# num.cbrt { #duckops.num.cbrt }
-
-`num.cbrt(col0)`
-
-returns the cube root of the number
-
-| duckdb example | result |
-| -------------- | ------ |
-| cbrt(8) | 2 |

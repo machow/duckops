@@ -1,9 +1,0 @@
-# num.ln { #duckops.num.ln }
-
-`num.ln(col0)`
-
-computes the natural logarithm of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| ln(2) | 0.693 |

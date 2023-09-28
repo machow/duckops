@@ -1,9 +1,0 @@
-# agg.var_pop { #duckops.agg.var_pop }
-
-`agg.var_pop(col0)`
-
-Returns the population variance.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

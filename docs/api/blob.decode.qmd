@@ -1,9 +1,0 @@
-# blob.decode { #duckops.blob.decode }
-
-`blob.decode(col0)`
-
-Convert blob to varchar. Fails if blob is not valid utf-8.
-
-| duckdb example | result |
-| -------------- | ------ |
-| decode('Ã¼'::BLOB) | ü |

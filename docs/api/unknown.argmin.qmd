@@ -1,7 +1,0 @@
-# unknown.argmin { #duckops.unknown.argmin }
-
-`unknown.argmin(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

@@ -1,9 +1,0 @@
-# dt.monthname { #duckops.dt.monthname }
-
-`dt.monthname(col0)`
-
-The (English) name of the month
-
-| duckdb example | result |
-| -------------- | ------ |
-| monthname(DATE '1992-09-20') | September |

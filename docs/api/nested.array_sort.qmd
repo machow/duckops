@@ -1,9 +1,0 @@
-# nested.array_sort { #duckops.nested.array_sort }
-
-`nested.array_sort(col0)`
-
-Alias for list_sort.
-
-| duckdb example | result |
-| -------------- | ------ |
-| array_sort([3, 6, 1, 2]) | [1, 2, 3, 6] |

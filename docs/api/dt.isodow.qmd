@@ -1,9 +1,0 @@
-# dt.isodow { #duckops.dt.isodow }
-
-`dt.isodow(col0)`
-
-Numeric ISO weekday (Monday = 1, Sunday = 7)
-
-| duckdb example | result |
-| -------------- | ------ |
-| isodow(date '1992-02-15') | 6 |

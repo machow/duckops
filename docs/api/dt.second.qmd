@@ -1,9 +1,0 @@
-# dt.second { #duckops.dt.second }
-
-`dt.second(col0)`
-
-Seconds
-
-| duckdb example | result |
-| -------------- | ------ |
-| second(timestamp '2021-08-03 11:59:44.123456') | 44 |

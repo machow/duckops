@@ -1,9 +1,0 @@
-# dt.epoch { #duckops.dt.epoch }
-
-`dt.epoch(col0)`
-
-Converts a timestamp to the seconds since the epoch
-
-| duckdb example | result |
-| -------------- | ------ |
-| epoch('2022-11-07 08:43:04'::TIMESTAMP); | 1667810584 |

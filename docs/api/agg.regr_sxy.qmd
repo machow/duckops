@@ -1,9 +1,0 @@
-# agg.regr_sxy { #duckops.agg.regr_sxy }
-
-`agg.regr_sxy(col0, col1)`
-
-Returns the population covariance of input values.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

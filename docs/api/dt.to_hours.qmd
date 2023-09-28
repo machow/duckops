@@ -1,9 +1,0 @@
-# dt.to_hours { #duckops.dt.to_hours }
-
-`dt.to_hours(col0)`
-
-Construct a hour interval
-
-| duckdb example | result |
-| -------------- | ------ |
-| to_hours(5) | INTERVAL 5 HOUR |

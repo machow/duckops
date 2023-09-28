@@ -1,7 +1,0 @@
-# unknown.sem { #duckops.unknown.sem }
-
-`unknown.sem(col0)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

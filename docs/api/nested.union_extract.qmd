@@ -1,9 +1,0 @@
-# nested.union_extract { #duckops.nested.union_extract }
-
-`nested.union_extract(col0, col1)`
-
-Extract the value with the named tags from the union. NULL if the tag is not currently selected
-
-| duckdb example | result |
-| -------------- | ------ |
-| union_extract(s, 'k') | hello |

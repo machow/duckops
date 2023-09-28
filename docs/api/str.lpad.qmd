@@ -1,9 +1,0 @@
-# str.lpad { #duckops.str.lpad }
-
-`str.lpad(col0, col1, col2)`
-
-Pads the string with the character from the left until it has count characters
-
-| duckdb example | result |
-| -------------- | ------ |
-| lpad('hello', 10, '>') | >>>>>hello |

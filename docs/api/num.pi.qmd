@@ -1,9 +1,0 @@
-# num.pi { #duckops.num.pi }
-
-`num.pi()`
-
-returns the value of pi
-
-| duckdb example | result |
-| -------------- | ------ |
-| pi() | 3.141592653589793 |

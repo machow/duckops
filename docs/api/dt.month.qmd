@@ -1,9 +1,0 @@
-# dt.month { #duckops.dt.month }
-
-`dt.month(col0)`
-
-Month
-
-| duckdb example | result |
-| -------------- | ------ |
-| month(date '1992-02-15') | 2 |

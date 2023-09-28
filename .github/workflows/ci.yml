@@ -61,10 +61,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install ".[dev]"
+          python -m pip install git+https://github.com/machow/quartodoc.git@feat-explode
           # TODO: temporary installs for examples
           # once quartodoc is stable we should move into their own libraries
-          python -m pip install shiny shinylive
-          python -m pip install --no-deps dascore==0.0.8
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.2.475"

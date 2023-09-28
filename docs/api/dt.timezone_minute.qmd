@@ -1,9 +1,0 @@
-# dt.timezone_minute { #duckops.dt.timezone_minute }
-
-`dt.timezone_minute(col0)`
-
-Time zone offset minutes portion
-
-| duckdb example | result |
-| -------------- | ------ |
-| timezone_minute(date '1992-02-15') | 0 |

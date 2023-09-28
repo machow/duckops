@@ -1,9 +1,0 @@
-# dt.decade { #duckops.dt.decade }
-
-`dt.decade(col0)`
-
-Decade (year / 10)
-
-| duckdb example | result |
-| -------------- | ------ |
-| decade(date '1992-02-15') | 199 |

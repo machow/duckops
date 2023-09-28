@@ -1,9 +1,0 @@
-# agg.last { #duckops.agg.last }
-
-`agg.last(col0)`
-
-Returns the last value of a column.
-
-| duckdb example | result |
-| -------------- | ------ |
-| last(A) | nan |

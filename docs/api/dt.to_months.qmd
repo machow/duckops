@@ -1,9 +1,0 @@
-# dt.to_months { #duckops.dt.to_months }
-
-`dt.to_months(col0)`
-
-Construct a month interval
-
-| duckdb example | result |
-| -------------- | ------ |
-| to_months(5) | INTERVAL 5 MONTH |

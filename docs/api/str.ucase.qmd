@@ -1,9 +1,0 @@
-# str.ucase { #duckops.str.ucase }
-
-`str.ucase(col0)`
-
-Alias of upper. Convert string to upper case
-
-| duckdb example | result |
-| -------------- | ------ |
-| ucase('Hello') | HELLO |

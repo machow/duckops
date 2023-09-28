@@ -1,9 +1,0 @@
-# agg.approx_count_distinct { #duckops.agg.approx_count_distinct }
-
-`agg.approx_count_distinct(col0)`
-
-Gives the approximate count of distintinct elements using HyperLogLog.
-
-| duckdb example | result |
-| -------------- | ------ |
-| approx_count_distinct(A) | nan |

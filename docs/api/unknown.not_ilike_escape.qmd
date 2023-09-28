@@ -1,7 +1,0 @@
-# unknown.not_ilike_escape { #duckops.unknown.not_ilike_escape }
-
-`unknown.not_ilike_escape(col0, col1, col2)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

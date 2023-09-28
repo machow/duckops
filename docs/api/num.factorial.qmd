@@ -1,9 +1,0 @@
-# num.factorial { #duckops.num.factorial }
-
-`num.factorial(col0)`
-
-See ! operator. Computes the product of the current integer and all integers below it
-
-| duckdb example | result |
-| -------------- | ------ |
-| factorial(4) | 24 |

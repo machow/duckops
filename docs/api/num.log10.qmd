@@ -1,9 +1,0 @@
-# num.log10 { #duckops.num.log10 }
-
-`num.log10(col0)`
-
-alias of log. computes the 10-log of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| log10(1000) | 3 |

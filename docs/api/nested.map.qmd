@@ -1,9 +1,0 @@
-# nested.map { #duckops.nested.map }
-
-`nested.map(*args)`
-
-Returns an empty map.
-
-| duckdb example | result |
-| -------------- | ------ |
-| map() | {} |

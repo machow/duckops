@@ -1,9 +1,0 @@
-# nested.list_filter { #duckops.nested.list_filter }
-
-`nested.list_filter(col0, col1)`
-
-Constructs a list from those elements of the input list for which the lambda function returns true. See the Lambda Functions section for more details.
-
-| duckdb example | result |
-| -------------- | ------ |
-| list_filter(l, x -> x > 4) | [5, 6] |

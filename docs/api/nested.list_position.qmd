@@ -1,9 +1,0 @@
-# nested.list_position { #duckops.nested.list_position }
-
-`nested.list_position(col0, col1)`
-
-Returns the index of the element if the list contains the element.
-
-| duckdb example | result |
-| -------------- | ------ |
-| list_contains([1, 2, NULL], 2) | 2 |

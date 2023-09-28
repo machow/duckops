@@ -1,9 +1,0 @@
-# str.jaro_winkler_similarity { #duckops.str.jaro_winkler_similarity }
-
-`str.jaro_winkler_similarity(col0, col1)`
-
-The Jaro-Winkler similarity between two strings. Different case is considered different. Returns a number between 0 and 1.
-
-| duckdb example | result |
-| -------------- | ------ |
-| jaro_winkler_similarity('duck','duckdb') | 0.93 |

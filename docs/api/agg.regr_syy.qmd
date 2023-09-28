@@ -1,9 +1,0 @@
-# agg.regr_syy { #duckops.agg.regr_syy }
-
-`agg.regr_syy(col0, col1)`
-
--
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

@@ -1,7 +1,0 @@
-# unknown.translate { #duckops.unknown.translate }
-
-`unknown.translate(col0, col1, col2)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

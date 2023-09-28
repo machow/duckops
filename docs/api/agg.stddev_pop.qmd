@@ -1,9 +1,0 @@
-# agg.stddev_pop { #duckops.agg.stddev_pop }
-
-`agg.stddev_pop(col0)`
-
-Returns the population standard deviation.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

@@ -1,9 +1,0 @@
-# dt.strptime { #duckops.dt.strptime }
-
-`dt.strptime(col0, col1)`
-
-Converts string to timestamp according to the format string
-
-| duckdb example | result |
-| -------------- | ------ |
-| strptime('Wed, 1 January 1992 - 08:38:40 PM', '%a, %-d %B %Y - %I:%M:%S %p') | 1992-01-01 20:38:40 |

@@ -1,9 +1,0 @@
-# dt.century { #duckops.dt.century }
-
-`dt.century(col0)`
-
-Extracts the century of a timestamp
-
-| duckdb example | result |
-| -------------- | ------ |
-| century(TIMESTAMP '1992-03-22') | 20 |

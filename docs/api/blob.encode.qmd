@@ -1,9 +1,0 @@
-# blob.encode { #duckops.blob.encode }
-
-`blob.encode(col0)`
-
-Convert varchar to blob. Converts utf-8 characters into literal encoding.
-
-| duckdb example | result |
-| -------------- | ------ |
-| encode('my_string_with_ü') | my_string_with_Ã¼ |

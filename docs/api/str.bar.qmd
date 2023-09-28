@@ -1,9 +1,0 @@
-# str.bar { #duckops.str.bar }
-
-`str.bar(col0, col1, col2, col3)`
-
-Draw a band whose width is proportional to (x - min) and equal to width characters when x = max. width defaults to 80.
-
-| duckdb example | result |
-| -------------- | ------ |
-| bar(5, 0, 20, 10) | ██▌ |

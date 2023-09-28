@@ -1,9 +1,0 @@
-# num.log2 { #duckops.num.log2 }
-
-`num.log2(col0)`
-
-computes the 2-log of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| log2(8) | 3 |

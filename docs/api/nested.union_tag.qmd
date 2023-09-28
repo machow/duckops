@@ -1,9 +1,0 @@
-# nested.union_tag { #duckops.nested.union_tag }
-
-`nested.union_tag(col0)`
-
-Retrieve the currently selected tag of the union as an Enum.
-
-| duckdb example | result |
-| -------------- | ------ |
-| union_tag(union_value(k := 'foo')) | 'k' |

@@ -1,9 +1,0 @@
-# num.round { #duckops.num.round }
-
-`num.round(col0)`
-
-round to s decimal places
-
-| duckdb example | result |
-| -------------- | ------ |
-| round(42.4332, 2) | 42.43 |

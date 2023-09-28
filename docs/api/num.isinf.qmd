@@ -1,9 +1,0 @@
-# num.isinf { #duckops.num.isinf }
-
-`num.isinf(col0)`
-
-Returns true if the floating point value is infinite, false otherwise
-
-| duckdb example | result |
-| -------------- | ------ |
-| isinf('Infinity'::float) | true |

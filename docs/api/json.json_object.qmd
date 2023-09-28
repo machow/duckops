@@ -1,9 +1,0 @@
-# json.json_object { #duckops.json.json_object }
-
-`json.json_object(*args)`
-
-Create a JSON object from any number of key, value pairs
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

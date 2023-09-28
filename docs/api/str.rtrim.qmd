@@ -1,9 +1,0 @@
-# str.rtrim { #duckops.str.rtrim }
-
-`str.rtrim(col0)`
-
-Removes any spaces from the right side of the string
-
-| duckdb example | result |
-| -------------- | ------ |
-| rtrim('␣␣␣␣test␣␣') | ␣␣␣␣test |

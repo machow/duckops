@@ -1,9 +1,0 @@
-# num.isfinite { #duckops.num.isfinite }
-
-`num.isfinite(col0)`
-
-Returns true if the floating point value is finite, false otherwise
-
-| duckdb example | result |
-| -------------- | ------ |
-| isfinite(5.5) | true |

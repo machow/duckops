@@ -1,9 +1,0 @@
-# num.random { #duckops.num.random }
-
-`num.random()`
-
-returns a random number between 0 and 1
-
-| duckdb example | result |
-| -------------- | ------ |
-| random() | various |

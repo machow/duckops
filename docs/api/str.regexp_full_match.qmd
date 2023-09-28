@@ -1,9 +1,0 @@
-# str.regexp_full_match { #duckops.str.regexp_full_match }
-
-`str.regexp_full_match(col0, col1)`
-
-Returns true if the entire string matches the regex (see Pattern Matching)
-
-| duckdb example | result |
-| -------------- | ------ |
-| regexp_full_match('anabanana', '(an)*') | false |

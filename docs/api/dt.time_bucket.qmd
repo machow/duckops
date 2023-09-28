@@ -1,9 +1,0 @@
-# dt.time_bucket { #duckops.dt.time_bucket }
-
-`dt.time_bucket(col0, col1)`
-
-Truncate date by the specified interval bucket_width. Buckets are aligned relative to origin date. origin defaults to 2000-01-03 for buckets that don’t include a month or year interval, and to 2000-01-01 for month and year buckets.
-
-| duckdb example | result |
-| -------------- | ------ |
-| time_bucket(INTERVAL '2 weeks', DATE '1992-04-20', DATE '1992-04-01') | 1992-04-15 |

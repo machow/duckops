@@ -1,7 +1,0 @@
-# unknown.quantile { #duckops.unknown.quantile }
-
-`unknown.quantile(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

@@ -1,9 +1,0 @@
-# str.strip_accents { #duckops.str.strip_accents }
-
-`str.strip_accents(col0)`
-
-Strips accents from string
-
-| duckdb example | result |
-| -------------- | ------ |
-| strip_accents('mühleisen') | muhleisen |

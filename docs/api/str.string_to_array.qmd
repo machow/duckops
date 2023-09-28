@@ -1,9 +1,0 @@
-# str.string_to_array { #duckops.str.string_to_array }
-
-`str.string_to_array(col0, col1)`
-
-Alias of string_split. Splits the string along the separator
-
-| duckdb example | result |
-| -------------- | ------ |
-| string_to_array('hello␣world', '␣') | ['hello', 'world'] |

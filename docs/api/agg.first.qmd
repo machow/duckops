@@ -1,9 +1,0 @@
-# agg.first { #duckops.agg.first }
-
-`agg.first(col0)`
-
-Returns the first value of a column.
-
-| duckdb example | result |
-| -------------- | ------ |
-| first(A) | nan |

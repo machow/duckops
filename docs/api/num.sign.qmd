@@ -1,9 +1,0 @@
-# num.sign { #duckops.num.sign }
-
-`num.sign(col0)`
-
-returns the sign of x as -1, 0 or 1
-
-| duckdb example | result |
-| -------------- | ------ |
-| sign(-349) | -1 |

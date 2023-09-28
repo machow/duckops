@@ -1,7 +1,0 @@
-# unknown.divide { #duckops.unknown.divide }
-
-`unknown.divide(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

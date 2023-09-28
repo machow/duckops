@@ -1,7 +1,0 @@
-# unknown.json_extract_path_text { #duckops.unknown.json_extract_path_text }
-
-`unknown.json_extract_path_text(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

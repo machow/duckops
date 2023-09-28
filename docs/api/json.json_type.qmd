@@ -1,9 +1,0 @@
-# json.json_type { #duckops.json.json_type }
-
-`json.json_type(col0)`
-
-Return the type of the supplied json, which is one of OBJECT, ARRAY, BIGINT, UBIGINT, VARCHAR, BOOLEAN, NULL. If path is specified, return the type of the element at the given path. If path is a LIST, the result will be LIST of types
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

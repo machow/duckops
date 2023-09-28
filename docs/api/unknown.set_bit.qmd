@@ -1,7 +1,0 @@
-# unknown.set_bit { #duckops.unknown.set_bit }
-
-`unknown.set_bit(col0, col1, col2)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

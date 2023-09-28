@@ -1,9 +1,0 @@
-# dt.to_timestamp { #duckops.dt.to_timestamp }
-
-`dt.to_timestamp(col0)`
-
-Converts sec since epoch to a timestamp
-
-| duckdb example | result |
-| -------------- | ------ |
-| to_timestamp(701222400) | 1992-03-22 00:00:00 |

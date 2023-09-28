@@ -1,9 +1,0 @@
-# str.printf { #duckops.str.printf }
-
-`str.printf(col0, *args)`
-
-Formats a string using printf syntax
-
-| duckdb example | result |
-| -------------- | ------ |
-| printf('Benchmark "%s" took %d seconds', 'CSV', 42) | Benchmark "CSV" took 42 seconds |

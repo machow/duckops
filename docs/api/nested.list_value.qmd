@@ -1,9 +1,0 @@
-# nested.list_value { #duckops.nested.list_value }
-
-`nested.list_value(*args)`
-
-Create a LIST containing the argument values.
-
-| duckdb example | result |
-| -------------- | ------ |
-| list_value(4, 5, 6) | [4, 5, 6] |

@@ -1,9 +1,0 @@
-# agg.histogram { #duckops.agg.histogram }
-
-`agg.histogram(col0)`
-
-Returns a LIST of STRUCTs with the fields bucket and count.
-
-| duckdb example | result |
-| -------------- | ------ |
-| histogram(A) | nan |

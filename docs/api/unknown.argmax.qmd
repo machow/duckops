@@ -1,7 +1,0 @@
-# unknown.argmax { #duckops.unknown.argmax }
-
-`unknown.argmax(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

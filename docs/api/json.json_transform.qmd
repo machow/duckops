@@ -1,9 +1,0 @@
-# json.json_transform { #duckops.json.json_transform }
-
-`json.json_transform(col0, col1)`
-
-Transform json according to the specified structure
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

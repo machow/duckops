@@ -1,9 +1,0 @@
-# str.lower { #duckops.str.lower }
-
-`str.lower(col0)`
-
-Convert string to lower case
-
-| duckdb example | result |
-| -------------- | ------ |
-| lower('Hello') | hello |

@@ -1,9 +1,0 @@
-# agg.regr_count { #duckops.agg.regr_count }
-
-`agg.regr_count(col0, col1)`
-
-Returns the number of non-null number pairs in a group.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

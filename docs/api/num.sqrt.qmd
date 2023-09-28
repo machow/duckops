@@ -1,9 +1,0 @@
-# num.sqrt { #duckops.num.sqrt }
-
-`num.sqrt(col0)`
-
-returns the square root of the number
-
-| duckdb example | result |
-| -------------- | ------ |
-| sqrt(9) | 3 |

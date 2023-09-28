@@ -1,9 +1,0 @@
-# dt.weekday { #duckops.dt.weekday }
-
-`dt.weekday(col0)`
-
-Numeric weekday synonym (Sunday = 0, Saturday = 6)
-
-| duckdb example | result |
-| -------------- | ------ |
-| weekday(date '1992-02-15') | 6 |

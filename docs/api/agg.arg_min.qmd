@@ -1,9 +1,0 @@
-# agg.arg_min { #duckops.agg.arg_min }
-
-`agg.arg_min(col0, col1)`
-
-Finds the row with the minimum val. Calculates the arg expression at that row.
-
-| duckdb example | result |
-| -------------- | ------ |
-| arg_min(A,B) | nan |

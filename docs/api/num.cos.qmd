@@ -1,9 +1,0 @@
-# num.cos { #duckops.num.cos }
-
-`num.cos(col0)`
-
-computes the cosine of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| cos(90) | -0.4480736161291701 |

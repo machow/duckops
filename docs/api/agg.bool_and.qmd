@@ -1,9 +1,0 @@
-# agg.bool_and { #duckops.agg.bool_and }
-
-`agg.bool_and(col0)`
-
-Returns TRUE if every input value is TRUE, otherwise FALSE.
-
-| duckdb example | result |
-| -------------- | ------ |
-| bool_and(A) | nan |

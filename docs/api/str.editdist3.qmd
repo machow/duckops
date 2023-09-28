@@ -1,9 +1,0 @@
-# str.editdist3 { #duckops.str.editdist3 }
-
-`str.editdist3(col0, col1)`
-
-Alias of levenshtein for SQLite compatibility. The minimum number of single-character edits (insertions, deletions or substitutions) required to change one string to the other. Different case is considered different.
-
-| duckdb example | result |
-| -------------- | ------ |
-| editdist3('duck','db') | 3.0 |

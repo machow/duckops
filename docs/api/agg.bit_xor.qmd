@@ -1,9 +1,0 @@
-# agg.bit_xor { #duckops.agg.bit_xor }
-
-`agg.bit_xor(col0)`
-
-Returns the bitwise XOR of all bits in a given expression.
-
-| duckdb example | result |
-| -------------- | ------ |
-| bit_xor(A) | nan |

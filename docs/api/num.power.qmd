@@ -1,9 +1,0 @@
-# num.power { #duckops.num.power }
-
-`num.power(col0, col1)`
-
-Alias of pow. computes x to the power of y
-
-| duckdb example | result |
-| -------------- | ------ |
-| power(2, 3) | 8 |

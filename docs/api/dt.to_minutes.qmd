@@ -1,9 +1,0 @@
-# dt.to_minutes { #duckops.dt.to_minutes }
-
-`dt.to_minutes(col0)`
-
-Construct a minute interval
-
-| duckdb example | result |
-| -------------- | ------ |
-| to_minutes(5) | INTERVAL 5 MINUTE |

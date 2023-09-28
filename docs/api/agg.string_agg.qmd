@@ -1,9 +1,0 @@
-# agg.string_agg { #duckops.agg.string_agg }
-
-`agg.string_agg(col0)`
-
-Concatenates the column string values with a separator
-
-| duckdb example | result |
-| -------------- | ------ |
-| string_agg(S, ',') | nan |

@@ -1,7 +1,0 @@
-# unknown.current_localtime { #duckops.unknown.current_localtime }
-
-`unknown.current_localtime()`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

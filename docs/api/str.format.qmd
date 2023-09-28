@@ -1,9 +1,0 @@
-# str.format { #duckops.str.format }
-
-`str.format(col0, *args)`
-
-Formats a string using fmt syntax
-
-| duckdb example | result |
-| -------------- | ------ |
-| format('Benchmark "{}" took {} seconds', 'CSV', 42) | Benchmark "CSV" took 42 seconds |

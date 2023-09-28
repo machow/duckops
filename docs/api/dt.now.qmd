@@ -1,9 +1,0 @@
-# dt.now { #duckops.dt.now }
-
-`dt.now()`
-
-Current date and time (start of current transaction)
-
-| duckdb example | result |
-| -------------- | ------ |
-| now() | 2022-10-08 12:44:46.122-07 |

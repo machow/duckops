@@ -1,9 +1,0 @@
-# num.abs { #duckops.num.abs }
-
-`num.abs(col0)`
-
-absolute value
-
-| duckdb example | result |
-| -------------- | ------ |
-| abs(-17.4) | 17.4 |

@@ -1,9 +1,0 @@
-# str.bit_length { #duckops.str.bit_length }
-
-`str.bit_length(col0)`
-
-Number of bits in a string.
-
-| duckdb example | result |
-| -------------- | ------ |
-| bit_length('abc') | 24 |

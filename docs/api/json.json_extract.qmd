@@ -1,9 +1,0 @@
-# json.json_extract { #duckops.json.json_extract }
-
-`json.json_extract(col0, col1)`
-
-Extract JSON from json at the given path. If path is a LIST, the result will be a LIST of JSON
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

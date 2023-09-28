@@ -1,9 +1,0 @@
-# dt.year { #duckops.dt.year }
-
-`dt.year(col0)`
-
-Year
-
-| duckdb example | result |
-| -------------- | ------ |
-| year(date '1992-02-15') | 1992 |

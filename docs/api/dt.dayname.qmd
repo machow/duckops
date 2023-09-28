@@ -1,9 +1,0 @@
-# dt.dayname { #duckops.dt.dayname }
-
-`dt.dayname(col0)`
-
-The (English) name of the weekday
-
-| duckdb example | result |
-| -------------- | ------ |
-| dayname(DATE '1992-09-20') | Sunday |

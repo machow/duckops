@@ -1,9 +1,0 @@
-# str.repeat { #duckops.str.repeat }
-
-`str.repeat(col0, col1)`
-
-Repeats the string count number of times
-
-| duckdb example | result |
-| -------------- | ------ |
-| repeat('A', 5) | AAAAA |

@@ -1,9 +1,0 @@
-# num.cot { #duckops.num.cot }
-
-`num.cot(col0)`
-
-computes the cotangent of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| cot(0.5) | 1.830487721712452 |

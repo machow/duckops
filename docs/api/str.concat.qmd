@@ -1,9 +1,0 @@
-# str.concat { #duckops.str.concat }
-
-`str.concat(col0, *args)`
-
-Concatenate many strings together
-
-| duckdb example | result |
-| -------------- | ------ |
-| concat('Hello', ' ', 'World') | Hello World |

@@ -1,9 +1,0 @@
-# num.nextafter { #duckops.num.nextafter }
-
-`num.nextafter(col0, col1)`
-
-return the next floating point value after x in the direction of y
-
-| duckdb example | result |
-| -------------- | ------ |
-| nextafter(1::float, 2::float) | 1.0000001 |

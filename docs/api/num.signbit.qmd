@@ -1,9 +1,0 @@
-# num.signbit { #duckops.num.signbit }
-
-`num.signbit(col0)`
-
-returns whether the signbit is set or not
-
-| duckdb example | result |
-| -------------- | ------ |
-| signbit(-0.0) | true |

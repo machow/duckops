@@ -1,9 +1,0 @@
-# json.from_json { #duckops.json.from_json }
-
-`json.from_json(col0, col1)`
-
-Alias for json_transform
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

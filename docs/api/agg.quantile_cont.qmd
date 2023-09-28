@@ -1,9 +1,0 @@
-# agg.quantile_cont { #duckops.agg.quantile_cont }
-
-`agg.quantile_cont(col0, col1)`
-
-Returns the intepolated quantile number between 0 and 1 . If pos is a LIST of FLOATs, then the result is a LIST of the corresponding intepolated quantiles.
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

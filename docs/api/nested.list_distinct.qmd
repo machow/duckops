@@ -1,9 +1,0 @@
-# nested.list_distinct { #duckops.nested.list_distinct }
-
-`nested.list_distinct(col0)`
-
-Removes all duplicates and NULLs from a list. Does not preserve the original order.
-
-| duckdb example | result |
-| -------------- | ------ |
-| list_distinct([1, 1, NULL, -3, 1, 5]) | [1, 5, -3] |

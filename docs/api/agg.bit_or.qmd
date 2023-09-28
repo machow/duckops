@@ -1,9 +1,0 @@
-# agg.bit_or { #duckops.agg.bit_or }
-
-`agg.bit_or(col0)`
-
-Returns the bitwise OR of all bits in a given expression.
-
-| duckdb example | result |
-| -------------- | ------ |
-| bit_or(A) | nan |

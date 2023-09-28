@@ -1,9 +1,0 @@
-# num.tan { #duckops.num.tan }
-
-`num.tan(col0)`
-
-computes the tangent of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| tan(90) | -1.995200412208242 |

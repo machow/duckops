@@ -1,9 +1,0 @@
-# str.regexp_replace { #duckops.str.regexp_replace }
-
-`str.regexp_replace(col0, col1, col2)`
-
-Replaces the first occurrence of regex with the replacement, use 'g' modifier to replace all occurrences instead (see Pattern Matching)
-
-| duckdb example | result |
-| -------------- | ------ |
-| select regexp_replace('hello', '[lo]', '-') | he-lo |

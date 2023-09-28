@@ -1,7 +1,0 @@
-# unknown.variance { #duckops.unknown.variance }
-
-`unknown.variance(col0)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

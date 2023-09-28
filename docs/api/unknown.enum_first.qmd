@@ -1,7 +1,0 @@
-# unknown.enum_first { #duckops.unknown.enum_first }
-
-`unknown.enum_first(col0)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

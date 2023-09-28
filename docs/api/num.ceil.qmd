@@ -1,9 +1,0 @@
-# num.ceil { #duckops.num.ceil }
-
-`num.ceil(col0)`
-
-rounds the number up
-
-| duckdb example | result |
-| -------------- | ------ |
-| ceil(17.4) | 18 |

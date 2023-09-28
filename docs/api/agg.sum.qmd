@@ -1,9 +1,0 @@
-# agg.sum { #duckops.agg.sum }
-
-`agg.sum(col0)`
-
-Calculates the sum value for all tuples in arg.
-
-| duckdb example | result |
-| -------------- | ------ |
-| sum(A) | nan |

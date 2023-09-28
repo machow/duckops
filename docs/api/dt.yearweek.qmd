@@ -1,9 +1,0 @@
-# dt.yearweek { #duckops.dt.yearweek }
-
-`dt.yearweek(col0)`
-
-BIGINT of combined ISO Year number and 2-digit version of ISO Week number
-
-| duckdb example | result |
-| -------------- | ------ |
-| yearweek(date '1992-02-15') | 199207 |

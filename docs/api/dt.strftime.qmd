@@ -1,9 +1,0 @@
-# dt.strftime { #duckops.dt.strftime }
-
-`dt.strftime(col0, col1)`
-
-Converts a date to a string according to the format string
-
-| duckdb example | result |
-| -------------- | ------ |
-| strftime(date '1992-01-01', '%a, %-d %B %Y') | Wed, 1 January 1992 |

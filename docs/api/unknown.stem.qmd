@@ -1,7 +1,0 @@
-# unknown.stem { #duckops.unknown.stem }
-
-`unknown.stem(col0, col1)`
-
-| duckdb example | result |
-| -------------- | ------ |
-| nan | nan |

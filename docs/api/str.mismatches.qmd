@@ -1,9 +1,0 @@
-# str.mismatches { #duckops.str.mismatches }
-
-`str.mismatches(col0, col1)`
-
-The number of positions with different characters for 2 strings of equal length. Different case is considered different.
-
-| duckdb example | result |
-| -------------- | ------ |
-| mismatches('duck','luck') | 1.0 |

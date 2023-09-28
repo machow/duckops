@@ -1,9 +1,0 @@
-# str.regexp_split_to_array { #duckops.str.regexp_split_to_array }
-
-`str.regexp_split_to_array(col0, col1)`
-
-Alias of string_split_regex. Splits the string along the regex
-
-| duckdb example | result |
-| -------------- | ------ |
-| regexp_split_to_array('hello␣world; 42', ';?␣') | ['hello', 'world', '42'] |

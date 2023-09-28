@@ -1,9 +1,0 @@
-# num.sin { #duckops.num.sin }
-
-`num.sin(col0)`
-
-computes the sin of x
-
-| duckdb example | result |
-| -------------- | ------ |
-| sin(90) | 0.8939966636005579 |

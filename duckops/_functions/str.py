@@ -6,7 +6,6 @@ from duckops.core.dispatch import create_generic, register_agg
 
 if TYPE_CHECKING:
     from duckops.core.data_style import *
-    AAA = 1
 
 del TYPE_CHECKING
 
